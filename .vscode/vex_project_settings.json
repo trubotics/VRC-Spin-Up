@@ -1,0 +1,18 @@
+{
+	"extension": {
+		"version": "0.3.0",
+		"json": 1
+	},
+	"project": {
+		"name": "Trubotics-Exec-VRC-Spin-Up",
+		"description": "I don't know what I'm doing!!!",
+		"creationDate": "2022-12-09, 10:36:28 a.m.",
+		"platform": "V5",
+		"language": "cpp",
+		"slot": 1,
+		"sdkVersion": "V5_20220726_10_00_00",
+		"cpp": {
+			"includePath": []
+		}
+	}
+}
