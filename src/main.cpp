@@ -16,6 +16,9 @@ competition Competition = competition();
 
 // define your global instances of motors and other devices here
 
+// brain
+brain Brain = brain();
+
 // controller
 controller primaryController = controller(primary);
 
@@ -25,13 +28,16 @@ motor backLeft = motor(PORT2, ratio18_1, false);
 motor frontRight = motor(PORT3, ratio18_1, false);
 motor backRight = motor(PORT4, ratio18_1, false);
 
+// intake
+motor intake = motor(PORT7, ratio6_1, false);
+
+// firing piston
+pneumatics firingPiston = pneumatics(Brain.ThreeWirePort.A);
+
 // flywheel
 motor flywheelFront = motor(PORT5, ratio36_1, false);
 motor flywheelBack = motor(PORT6, ratio36_1, false);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
-
-// intake
-motor intake = motor(PORT7, ratio18_1, false);
 
 /* Global Functions */
 
