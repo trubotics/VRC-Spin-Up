@@ -1,8 +1,8 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       Trubotics                                                  */
-/*    Created:      2022-12-09, 10:36:28 a.m.                                    */
+/*    Author:       Trubotics                                                 */
+/*    Created:      2022-12-09, 10:36:28 a.m.                                 */
 /*    Description:  V5 project                                                */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
@@ -22,8 +22,16 @@ controller primaryController = controller(primary);
 // drive train
 motor frontLeft = motor(PORT1, ratio18_1, false);
 motor backLeft = motor(PORT2, ratio18_1, false);
-motor frontRight = motor(PORT3, ratio18_1, true);
-motor backRight = motor(PORT4, ratio18_1, true);
+motor frontRight = motor(PORT3, ratio18_1, false);
+motor backRight = motor(PORT4, ratio18_1, false);
+
+// flywheel
+motor flywheelFront = motor(PORT5, ratio36_1, false);
+motor flywheelBack = motor(PORT6, ratio36_1, false);
+motor_group flywheel = motor_group(flywheelFront, flywheelBack);
+
+// intake
+motor intake = motor(PORT7, ratio18_1, false);
 
 /* Global Functions */
 
