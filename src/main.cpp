@@ -12,7 +12,7 @@
 using namespace vex;
 
 // A global instance of competition
-competition Competition;
+competition Competition = competition();
 
 // define your global instances of motors and other devices here
 
