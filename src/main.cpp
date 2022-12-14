@@ -39,17 +39,6 @@ motor flywheelFront = motor(PORT5, ratio36_1, false);
 motor flywheelBack = motor(PORT6, ratio36_1, false);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
-/* Global Functions */
-
-// mech drive
-void drive(int forward, int right, int turn)
-{
-  frontRight.spin(vex::forward, forward - right + turn, vex::percent);
-  frontLeft.spin(vex::forward, forward + right - turn, vex::percent);
-  backRight.spin(vex::forward, forward + right + turn, vex::percent);
-  backLeft.spin(vex::forward, forward - right - turn, vex::percent);
-}
-
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
@@ -65,6 +54,21 @@ void pre_auton(void)
 
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
+
+  Brain.Screen.print("Battery: %d%", Brain.Battery.capacity());
+
+  // List disconnected devices
+  Brain.Screen.print("Disconnected devices:");
+  Brain.Screen.newLine();
+  
+  device devices[] = {frontLeft, backLeft, frontRight, backRight, intake, flywheelFront, flywheelBack};
+  char* deviceNames[] = {"Drivetrain: Front Left", "Drivetrain: Back Left", "Drivetrain: Front Right", "Drivetrain: Back Right", "Intake", "Flywheel: Front", "Flywheel: Back"};
+  for (int i = 0; i < sizeof(devices); i++) {
+    if (!devices[i].installed()) {
+      Brain.Screen.print(deviceNames[i]);
+      Brain.Screen.newLine();
+    }
+  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -79,9 +83,7 @@ void pre_auton(void)
 
 void autonomous(void)
 {
-  // ..........................................................................
-  // Insert autonomous user code here.
-  // ..........................................................................
+  Brain.Screen.clearScreen();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -97,6 +99,7 @@ void autonomous(void)
 void usercontrol(void)
 {
   // User control code here, inside the loop
+  Brain.Screen.clearScreen();
   while (1)
   {
     // This is the main execution loop for the user control program.
@@ -109,9 +112,15 @@ void usercontrol(void)
     // ........................................................................
 
     // arcade drive
-    drive(primaryController.Axis3.position(),
-          primaryController.Axis4.position(),
-          primaryController.Axis1.position());
+    int forward = primaryController.Axis3.position();
+    int right = primaryController.Axis4.position();
+    int turn = primaryController.Axis1.position();
+
+    frontRight.spin(vex::forward, forward - right + turn, vex::percent);
+    frontLeft.spin(vex::forward, forward + right - turn, vex::percent);
+    backRight.spin(vex::forward, forward + right + turn, vex::percent);
+    backLeft.spin(vex::forward, forward - right - turn, vex::percent);
+    
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
