@@ -39,6 +39,17 @@ motor flywheelFront = motor(PORT5, ratio36_1, false);
 motor flywheelBack = motor(PORT6, ratio36_1, false);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
+/* Global Functions */
+void firedisk() {
+  // check precondition: flywheel speed
+  if (flywheel.velocity(vex::velocityUnits::pct) < 90) {
+    return;
+  }
+
+  firingPiston.set(true);
+  firingPiston.set(false);
+}
+
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
@@ -120,6 +131,8 @@ void usercontrol(void)
     frontLeft.spin(vex::forward, forward + right - turn, vex::percent);
     backRight.spin(vex::forward, forward + right + turn, vex::percent);
     backLeft.spin(vex::forward, forward - right - turn, vex::percent);
+
+
     
 
     wait(20, msec); // Sleep the task for a short amount of time to
