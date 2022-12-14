@@ -40,14 +40,22 @@ motor flywheelBack = motor(PORT6, ratio36_1, false);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
 /* Global Functions */
-void firedisk() {
-  // check precondition: flywheel speed
-  if (flywheel.velocity(vex::velocityUnits::pct) < 90) {
-    return;
+
+double lastFiringTime = -100; // The time when the last disk was fired
+// Fires a disk if the flywheel is spinning fast enough and the cooldown has passed, returns true if a disk was fired
+bool fireDisk(bool skipPreCheck = false) {
+  // check preconditions: cooldown (100 ms), flywheel speed
+  if (!skipPreCheck && // precheck override
+  (lastFiringTime + 100 > Brain.timer(timeUnits::msec) // cooldown
+  || flywheel.velocity(vex::velocityUnits::pct) < 90)) { // flywheel speed
+    return false;
   }
 
   firingPiston.set(true);
   firingPiston.set(false);
+
+  lastFiringTime = Brain.timer(timeUnits::msec);
+  return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -111,6 +119,7 @@ void usercontrol(void)
 {
   // User control code here, inside the loop
   Brain.Screen.clearScreen();
+
   while (1)
   {
     // This is the main execution loop for the user control program.
@@ -132,8 +141,10 @@ void usercontrol(void)
     backRight.spin(vex::forward, forward + right + turn, vex::percent);
     backLeft.spin(vex::forward, forward - right - turn, vex::percent);
 
-
-    
+    // fire disk
+    if (primaryController.ButtonA.pressing()) {
+      fireDisk();
+    }
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
