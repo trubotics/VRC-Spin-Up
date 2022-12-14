@@ -115,7 +115,7 @@ void autonomous(void)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void usercontrol(void)
+void userControl(void)
 {
   // User control code here, inside the loop
   Brain.Screen.clearScreen();
@@ -158,7 +158,7 @@ int main()
 {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
-  Competition.drivercontrol(usercontrol);
+  Competition.drivercontrol(userControl);
 
   // Run the pre-autonomous function.
   pre_auton();
