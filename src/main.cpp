@@ -8,6 +8,8 @@
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
+#include "global.cpp"
+#include "mecanumDrivetrain.cpp"
 
 using namespace vex;
 
@@ -27,6 +29,7 @@ motor frontLeft = motor(PORT1, ratio18_1, false);
 motor backLeft = motor(PORT2, ratio18_1, false);
 motor frontRight = motor(PORT3, ratio18_1, false);
 motor backRight = motor(PORT4, ratio18_1, false);
+mecanumDrivetrain drive = mecanumDrivetrain(PORT1, PORT2, PORT3, PORT4);
 
 // intake
 motor intake = motor(PORT7, ratio6_1, false);
@@ -79,14 +82,20 @@ void pre_auton(void)
   // List disconnected devices
   Brain.Screen.print("Disconnected devices:");
   Brain.Screen.newLine();
+  Brain.Screen.newLine();
   
-  device devices[] = {frontLeft, backLeft, frontRight, backRight, intake, flywheelFront, flywheelBack};
-  char* deviceNames[] = {"Drivetrain: Front Left", "Drivetrain: Back Left", "Drivetrain: Front Right", "Drivetrain: Back Right", "Intake", "Flywheel: Front", "Flywheel: Back"};
-  for (int i = 0; i < sizeof(devices); i++) {
-    if (!devices[i].installed()) {
-      Brain.Screen.print(deviceNames[i]);
-      Brain.Screen.newLine();
-    }
+  Brain.Screen.print(drive.missingConnections());
+  Brain.Screen.newLine();
+
+  device flywheelDevices[] = {flywheelFront, flywheelBack};
+  char* flywheelDeviceNames[] = {"Front", "Back"};
+  Brain.Screen.print(global::missingConnections("Flywheel", flywheelDevices, flywheelDeviceNames));
+  Brain.Screen.newLine();
+
+  if (!intake.installed())
+  {
+    Brain.Screen.print("Intake Motor");
+    Brain.Screen.newLine();
   }
 }
 
@@ -133,13 +142,9 @@ void userControl(void)
 
     // arcade drive
     int forward = primaryController.Axis3.position();
-    int right = primaryController.Axis4.position();
+    int strafe = primaryController.Axis4.position();
     int turn = primaryController.Axis1.position();
-
-    frontRight.spin(vex::forward, forward - right + turn, vex::percent);
-    frontLeft.spin(vex::forward, forward + right - turn, vex::percent);
-    backRight.spin(vex::forward, forward + right + turn, vex::percent);
-    backLeft.spin(vex::forward, forward - right - turn, vex::percent);
+    drive.drive(forward, strafe, turn);
 
     // fire disk
     if (primaryController.ButtonA.pressing()) {
