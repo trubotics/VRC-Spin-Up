@@ -8,7 +8,6 @@
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
-#include "global.cpp"
 #include "mecanumDrivetrain.cpp"
 
 using namespace vex;
@@ -29,7 +28,7 @@ motor frontLeft = motor(PORT1, ratio18_1, false);
 motor backLeft = motor(PORT2, ratio18_1, false);
 motor frontRight = motor(PORT3, ratio18_1, false);
 motor backRight = motor(PORT4, ratio18_1, false);
-mecanumDrivetrain drive = mecanumDrivetrain(PORT1, PORT2, PORT3, PORT4);
+MecanumDriveTrain drive = MecanumDriveTrain(PORT1, PORT2, PORT3, PORT4);
 
 // intake
 motor intake = motor(PORT7, ratio6_1, false);
@@ -68,27 +67,6 @@ void pre_auton(void)
   // flywheel
   flywheel.setVelocity(100, vex::velocityUnits::pct);
   flywheel.setStopping(vex::brakeType::coast);
-
-  Brain.Screen.print("Battery: %d%", Brain.Battery.capacity());
-
-  // List disconnected devices
-  Brain.Screen.print("Disconnected devices:");
-  Brain.Screen.newLine();
-  Brain.Screen.newLine();
-
-  Brain.Screen.print(drive.missingConnections());
-  Brain.Screen.newLine();
-
-  device flywheelDevices[] = {flywheelFront, flywheelBack};
-  char *flywheelDeviceNames[] = {"Front", "Back"};
-  Brain.Screen.print(global::missingConnections("Flywheel", flywheelDevices, flywheelDeviceNames));
-  Brain.Screen.newLine();
-
-  if (!intake.installed())
-  {
-    Brain.Screen.print("Intake Motor");
-    Brain.Screen.newLine();
-  }
 }
 
 void autonomous(void)
