@@ -20,10 +20,11 @@ private:
     motor rightFront = NULL;
     motor rightBack = NULL;
     void convertMotorValues(int forward, int strafe, int turn, int motorValues[]);
+
 public:
     mecanumDrivetrain(int32_t leftFrontPort, int32_t leftBackPort, int32_t rightFrontPort, int32_t rightBackPort);
 
-    char* missingConnections();
+    char *missingConnections();
     void drive(int forward, int strafe, int turn);
 };
 
@@ -35,10 +36,10 @@ mecanumDrivetrain::mecanumDrivetrain(int32_t leftFrontPort, int32_t leftBackPort
     rightBack = motor(rightBackPort, ratio18_1, false);
 }
 
-char* mecanumDrivetrain::missingConnections()
+char *mecanumDrivetrain::missingConnections()
 {
     device drivetrainDevices[] = {leftFront, leftBack, rightFront, rightBack};
-    char* drivetrainDeviceNames[] = {"Left Front", "Left Back", "Right Front", "Right Back"};
+    char *drivetrainDeviceNames[] = {"Left Front", "Left Back", "Right Front", "Right Back"};
     return global::missingConnections("Drive Train", drivetrainDevices, drivetrainDeviceNames);
 }
 

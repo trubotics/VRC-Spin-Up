@@ -46,11 +46,13 @@ motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
 double lastFiringTime = -100; // The time when the last disk was fired
 // Fires a disk if the flywheel is spinning fast enough and the cooldown has passed, returns true if a disk was fired
-bool fireDisk(bool skipPreCheck = false) {
+bool fireDisk(bool skipPreCheck = false)
+{
   // check preconditions: cooldown (100 ms), flywheel speed
-  if (!skipPreCheck && // precheck override
-  (lastFiringTime + 100 > Brain.timer(timeUnits::msec) // cooldown
-  || flywheel.velocity(vex::velocityUnits::pct) < 90)) { // flywheel speed
+  if (!skipPreCheck &&                                     // precheck override
+      (lastFiringTime + 100 > Brain.timer(timeUnits::msec) // cooldown
+       || flywheel.velocity(vex::velocityUnits::pct) < 90))
+  { // flywheel speed
     return false;
   }
 
@@ -61,34 +63,20 @@ bool fireDisk(bool skipPreCheck = false) {
   return true;
 }
 
-/*---------------------------------------------------------------------------*/
-/*                          Pre-Autonomous Functions                         */
-/*                                                                           */
-/*  You may want to perform some actions before the competition starts.      */
-/*  Do them in the following function.  You must return from this function   */
-/*  or the autonomous and usercontrol tasks will not be started.  This       */
-/*  function is only called once after the V5 has been powered on and        */
-/*  not every time that the robot is disabled.                               */
-/*---------------------------------------------------------------------------*/
-
 void pre_auton(void)
 {
-
-  // All activities that occur before the competition starts
-  // Example: clearing encoders, setting servo positions, ...
-
   Brain.Screen.print("Battery: %d%", Brain.Battery.capacity());
 
   // List disconnected devices
   Brain.Screen.print("Disconnected devices:");
   Brain.Screen.newLine();
   Brain.Screen.newLine();
-  
+
   Brain.Screen.print(drive.missingConnections());
   Brain.Screen.newLine();
 
   device flywheelDevices[] = {flywheelFront, flywheelBack};
-  char* flywheelDeviceNames[] = {"Front", "Back"};
+  char *flywheelDeviceNames[] = {"Front", "Back"};
   Brain.Screen.print(global::missingConnections("Flywheel", flywheelDevices, flywheelDeviceNames));
   Brain.Screen.newLine();
 
@@ -99,30 +87,10 @@ void pre_auton(void)
   }
 }
 
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              Autonomous Task                              */
-/*                                                                           */
-/*  This task is used to control your robot during the autonomous phase of   */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
-
 void autonomous(void)
 {
   Brain.Screen.clearScreen();
 }
-
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              User Control Task                            */
-/*                                                                           */
-/*  This task is used to control your robot during the user control phase of */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
 
 void userControl(void)
 {
@@ -131,15 +99,6 @@ void userControl(void)
 
   while (1)
   {
-    // This is the main execution loop for the user control program.
-    // Each time through the loop your program should update motor + servo
-    // values based on feedback from the joysticks.
-
-    // ........................................................................
-    // Insert user code here. This is where you use the joystick values to
-    // update your motors, etc.
-    // ........................................................................
-
     // arcade drive
     int forward = primaryController.Axis3.position();
     int strafe = primaryController.Axis4.position();
@@ -147,7 +106,8 @@ void userControl(void)
     drive.drive(forward, strafe, turn);
 
     // fire disk
-    if (primaryController.ButtonA.pressing()) {
+    if (primaryController.ButtonA.pressing())
+    {
       fireDisk();
     }
 
