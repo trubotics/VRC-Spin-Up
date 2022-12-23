@@ -7,6 +7,7 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
+#include <cmath>
 #include "vex.h"
 
 using namespace vex;
@@ -46,6 +47,30 @@ void MecanumDriveTrain::convertMotorValues(int forward, int strafe, int turn, in
     motorValues[1] = forward - strafe - turn; // back left
     motorValues[2] = forward - strafe + turn; // front right
     motorValues[3] = forward + strafe + turn; // back right
+    
+//     // alternative more accurate version (if it works correctly), uncomment and test
+//     int x = strafe;      // unnecessary, can be directly put into atan and hypot
+//     int y = -forward;    // unnecessary, can be directly put into atan and hypot
+//     double theta = atan2(y, x);
+//     double power = hypot(x, y);
+
+//     const double PI = atan(1) * 4; // could be slightly optimized -> put smwhere else to reduce repeated calculation
+    
+//     double s = sin(theta - PI/4);
+//     double c = cos(theta - PI/4);
+    
+//     double mx = max(abs(s), abs(c));
+//     motorValues[0] = power * c/mx + turn;
+//     motorValues[1] = power * s/mx + turn;
+//     motorValues[2] = power * s/mx - turn;
+//     motorValues[3] = power * c/mx - turn;
+    
+//     if ((power + abs(turn)) > 127) { // unsure if 127 is max
+//         for (int i=0;i<4;i++) {
+//             motorValues[i] /= power+turn;
+//         }
+//     }
+    
     return;
 }
 
