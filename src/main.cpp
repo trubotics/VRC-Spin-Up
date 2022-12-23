@@ -109,10 +109,34 @@ void userControl(void)
     int turn = primaryController.Axis1.position();
     drive.drive(forward, strafe, turn);
 
+    // intake
+    if (primaryController.ButtonL1.pressing())
+    {
+      intake.spin(vex::forward);
+    }
+    else if (primaryController.ButtonL2.pressing())
+    {
+      intake.spin(vex::reverse);
+    }
+    else
+    {
+      intake.stop();
+    }
+
     // fire disk
-    if (primaryController.ButtonA.pressing())
+    if (primaryController.ButtonR1.pressing())
     {
       fireDisk();
+    }
+
+    // spin flywheel
+    if (primaryController.ButtonL1.pressing())
+    {
+      flywheel.spin(vex::forward);
+    }
+    else
+    {
+      flywheel.stop();
     }
 
     wait(20, msec); // Sleep the task for a short amount of time to
