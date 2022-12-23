@@ -34,6 +34,12 @@ mecanumDrivetrain::mecanumDrivetrain(int32_t leftFrontPort, int32_t leftBackPort
     leftBack = motor(leftBackPort, ratio18_1, false);
     rightFront = motor(rightFrontPort, ratio18_1, false);
     rightBack = motor(rightBackPort, ratio18_1, false);
+
+    // set brake modes
+    leftFront.setStopping(vex::brakeType::hold);
+    leftBack.setStopping(vex::brakeType::hold);
+    rightFront.setStopping(vex::brakeType::hold);
+    rightBack.setStopping(vex::brakeType::hold);
 }
 
 char *mecanumDrivetrain::missingConnections()

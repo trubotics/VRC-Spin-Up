@@ -65,6 +65,10 @@ bool fireDisk(bool skipPreCheck = false)
 
 void pre_auton(void)
 {
+  // flywheel
+  flywheel.setVelocity(100, vex::velocityUnits::pct);
+  flywheel.setStopping(vex::brakeType::coast);
+
   Brain.Screen.print("Battery: %d%", Brain.Battery.capacity());
 
   // List disconnected devices
