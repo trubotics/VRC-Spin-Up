@@ -7,8 +7,8 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-#include "vex.h"
-#include "mecanumDrivetrain.cpp"
+#include <vex.h>
+#include <mecanumDrivetrain.h>
 
 using namespace vex;
 
