@@ -16,6 +16,12 @@ const int blue = 2;
 const int miss = 3;
 } 
 
+/* 
+* RGB filters
+* sylib::MedianFilter hueFilter(5, 2, 1);
+* sylib::MedianFilter distanceFilter(5, 2, 1);
+*/
+
 // Sensors 
 pros::Distance indexerSensor(2);
 pros::Optical rollerSensor(3);
