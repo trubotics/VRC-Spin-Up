@@ -24,21 +24,17 @@ brain Brain = brain();
 controller primaryController = controller(primary);
 
 // drive train
-motor frontLeft = motor(PORT1, ratio18_1, false);
-motor backLeft = motor(PORT2, ratio18_1, false);
-motor frontRight = motor(PORT3, ratio18_1, false);
-motor backRight = motor(PORT4, ratio18_1, false);
-MecanumDriveTrain drive = MecanumDriveTrain(PORT1, PORT2, PORT3, PORT4);
+MecanumDriveTrain drive = MecanumDriveTrain(PORT15, PORT16, PORT5, PORT6);
 
 // intake
-motor intake = motor(PORT7, ratio6_1, false);
+motor intake = motor(PORT1, ratio6_1, false);
 
 // firing piston
 pneumatics firingPiston = pneumatics(Brain.ThreeWirePort.A);
 
 // flywheel
-motor flywheelFront = motor(PORT5, ratio36_1, false);
-motor flywheelBack = motor(PORT6, ratio36_1, false);
+motor flywheelFront = motor(PORT2, ratio36_1, false);
+motor flywheelBack = motor(PORT3, ratio36_1, false);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
 /* Global Functions */
