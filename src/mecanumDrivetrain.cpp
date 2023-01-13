@@ -13,12 +13,15 @@
 
 using namespace vex;
 
-MecanumDriveTrain::MecanumDriveTrain(int32_t leftFrontPort, int32_t leftBackPort, int32_t rightFrontPort, int32_t rightBackPort)
+MecanumDriveTrain::MecanumDriveTrain(int32_t leftFrontPort, bool leftFrontReversed, 
+int32_t leftBackPort, bool leftBackReversed, 
+int32_t rightFrontPort, bool rightFrontReversed, 
+int32_t rightBackPort, bool rightBackReversed)
 {
-    leftFront = motor(leftFrontPort, ratio18_1, false);
-    leftBack = motor(leftBackPort, ratio18_1, false);
-    rightFront = motor(rightFrontPort, ratio18_1, false);
-    rightBack = motor(rightBackPort, ratio18_1, false);
+    leftFront = motor(leftFrontPort, ratio18_1, leftFrontReversed);
+    leftBack = motor(leftBackPort, ratio18_1, leftBackReversed);
+    rightFront = motor(rightFrontPort, ratio18_1, rightFrontReversed);
+    rightBack = motor(rightBackPort, ratio18_1, rightBackReversed);
 
     // set brake modes
     leftFront.setStopping(vex::brakeType::hold);

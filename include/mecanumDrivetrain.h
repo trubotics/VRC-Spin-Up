@@ -14,7 +14,10 @@ private:
     void convertMotorValues(int forward, int strafe, int turn, int motorValues[]);
 
 public:
-    MecanumDriveTrain(int32_t leftFrontPort, int32_t leftBackPort, int32_t rightFrontPort, int32_t rightBackPort);
+    MecanumDriveTrain(int32_t leftFrontPort, bool leftFrontReversed, 
+    int32_t leftBackPort, bool leftBackReversed, 
+    int32_t rightFrontPort, bool rightFrontReversed, 
+    int32_t rightBackPort, bool rightBackReversed);
 
     void drive(int forward, int strafe, int turn);
 };

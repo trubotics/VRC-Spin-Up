@@ -24,7 +24,7 @@ brain Brain = brain();
 controller primaryController = controller(primary);
 
 // drive train
-MecanumDriveTrain drive = MecanumDriveTrain(PORT15, PORT16, PORT5, PORT6);
+MecanumDriveTrain drive = MecanumDriveTrain(PORT15, true, PORT16, true, PORT5, false, PORT6, false);
 
 // intake
 motor intake = motor(PORT1, ratio6_1, false);
