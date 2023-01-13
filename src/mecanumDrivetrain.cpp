@@ -32,10 +32,10 @@ int32_t rightBackPort, bool rightBackReversed)
 
 void MecanumDriveTrain::convertMotorValues(int forward, int strafe, int turn, int motorValues[])
 {
-    motorValues[0] = forward + strafe - turn; // front left
-    motorValues[1] = forward - strafe - turn; // back left
-    motorValues[2] = forward - strafe + turn; // front right
-    motorValues[3] = forward + strafe + turn; // back right
+    motorValues[0] = forward + strafe + turn; // front left
+    motorValues[1] = forward - strafe + turn; // back left
+    motorValues[2] = forward - strafe - turn; // front right
+    motorValues[3] = forward + strafe - turn; // back right
     return;
 }
 

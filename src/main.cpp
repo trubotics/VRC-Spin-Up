@@ -78,9 +78,9 @@ void userControl(void)
   while (1)
   {
     // arcade drive
-    int forward = primaryController.Axis1.position();
-    int strafe = primaryController.Axis2.position();
-    int turn = primaryController.Axis3.position();
+    int forward = primaryController.Axis3.position();
+    int strafe = primaryController.Axis4.position();
+    int turn = primaryController.Axis1.position();
     drive.drive(forward, strafe, turn);
 
     // intake
