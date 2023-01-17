@@ -27,14 +27,14 @@ controller primaryController = controller(primary);
 MecanumDriveTrain drive = MecanumDriveTrain(PORT15, true, PORT16, true, PORT5, false, PORT6, false);
 
 // intake
-motor intake = motor(PORT1, ratio6_1, false);
+motor intake = motor(PORT8, ratio6_1, true);
 
 // firing piston
 pneumatics firingPiston = pneumatics(Brain.ThreeWirePort.A);
 
 // flywheel
-motor flywheelFront = motor(PORT2, ratio36_1, false);
-motor flywheelBack = motor(PORT3, ratio36_1, false);
+motor flywheelFront = motor(PORT11, ratio36_1, false);
+motor flywheelBack = motor(PORT12, ratio36_1, false);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
 /* Global Functions */
@@ -63,6 +63,9 @@ void pre_auton(void)
   // flywheel
   flywheel.setVelocity(100, vex::velocityUnits::pct);
   flywheel.setStopping(vex::brakeType::coast);
+
+  //intake
+  intake.setVelocity(100, vex::velocityUnits::pct);
 }
 
 void autonomous(void)
@@ -104,7 +107,7 @@ void userControl(void)
     }
 
     // spin flywheel
-    if (primaryController.ButtonL1.pressing())
+    if (primaryController.ButtonR2.pressing())
     {
       flywheel.spin(vex::forward);
     }
