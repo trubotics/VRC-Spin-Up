@@ -25,6 +25,7 @@ controller primaryController = controller(primary);
 
 // drive train
 MecanumDriveTrain drive = MecanumDriveTrain(PORT15, true, PORT16, true, PORT5, false, PORT6, false);
+bool driveInverted = false;
 
 // intake
 motor intake = motor(PORT8, ratio6_1, true);
@@ -78,12 +79,24 @@ void userControl(void)
   // User control code here, inside the loop
   Brain.Screen.clearScreen();
 
+  // callbacks
+  primaryController.ButtonA.pressed(
+      []() {
+        driveInverted = !driveInverted;
+      }
+  );
+
   while (1)
   {
     // arcade drive
     int forward = primaryController.Axis3.position();
     int strafe = primaryController.Axis4.position();
     int turn = primaryController.Axis1.position();
+    if (driveInverted)
+    {
+      forward *= -1;
+      strafe *= -1;
+    }
     drive.drive(forward, strafe, turn);
 
     // intake
