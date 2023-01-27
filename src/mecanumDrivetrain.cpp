@@ -24,10 +24,10 @@ int32_t rightBackPort, bool rightBackReversed)
     rightBack = motor(rightBackPort, ratio18_1, rightBackReversed);
 
     // set brake modes
-    leftFront.setStopping(vex::brakeType::hold);
-    leftBack.setStopping(vex::brakeType::hold);
-    rightFront.setStopping(vex::brakeType::hold);
-    rightBack.setStopping(vex::brakeType::hold);
+    leftFront.setStopping(vex::brakeType::brake);
+    leftBack.setStopping(vex::brakeType::brake);
+    rightFront.setStopping(vex::brakeType::brake);
+    rightBack.setStopping(vex::brakeType::brake);
 }
 
 void MecanumDriveTrain::convertMotorValues(int forward, int strafe, int turn, int motorValues[])
