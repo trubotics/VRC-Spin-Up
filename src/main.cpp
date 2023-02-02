@@ -98,10 +98,16 @@ void userControl(void)
     int forward = primaryController.Axis3.position();
     int strafe = primaryController.Axis4.position();
     int turn = primaryController.Axis1.position();
-    if (driveInverted)
+    if (driveInverted) // check if controls should be inverted (intake forward)
     {
       forward *= -1;
       strafe *= -1;
+    }
+    if (primaryController.ButtonX.pressing()) // half speed mode
+    {
+      forward /= 2;
+      strafe /= 2;
+      turn /= 2;
     }
     drive.drive(forward, strafe, turn);
 
