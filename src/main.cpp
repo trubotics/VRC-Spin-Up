@@ -30,6 +30,9 @@ bool driveInverted = false;
 // intake
 motor intake = motor(PORT8, ratio6_1, true);
 
+// roller
+motor roller = motor(PORT10, ratio6_1, false);
+
 // firing piston
 pneumatics firingPiston = pneumatics(Brain.ThreeWirePort.A);
 
@@ -111,6 +114,20 @@ void userControl(void)
     else
     {
       intake.stop();
+    }
+
+    // roller
+    if (primaryController.ButtonL1.pressing())
+    {
+      roller.spin(vex::forward);
+    }
+    else if (primaryController.ButtonL2.pressing())
+    {
+      roller.spin(vex::reverse);
+    }
+    else
+    {
+      roller.stop();
     }
 
     // fire disk
