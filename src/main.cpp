@@ -103,11 +103,11 @@ void userControl(void)
       forward *= -1;
       strafe *= -1;
     }
-    if (primaryController.ButtonX.pressing()) // half speed mode
+    if (primaryController.ButtonX.pressing()) // slow mode (1/3 speed)
     {
-      forward /= 2;
-      strafe /= 2;
-      turn /= 2;
+      forward /= 3;
+      strafe /= 3;
+      turn /= 3;
     }
     drive.drive(forward, strafe, turn);
 
