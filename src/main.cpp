@@ -70,6 +70,9 @@ void pre_auton(void)
 
   //intake
   intake.setVelocity(100, vex::velocityUnits::pct);
+
+  // roller
+  roller.setVelocity(25, vex::velocityUnits::pct);
 }
 
 void autonomous(void)
@@ -117,17 +120,19 @@ void userControl(void)
     }
 
     // roller
-    if (primaryController.ButtonL1.pressing())
-    {
-      roller.spin(vex::forward);
-    }
-    else if (primaryController.ButtonL2.pressing())
-    {
-      roller.spin(vex::reverse);
-    }
-    else
+    if (!primaryController.ButtonX.pressing())
     {
       roller.stop();
+    }
+    else {
+      if (primaryController.ButtonL1.pressing())
+      {
+        roller.spin(vex::forward);
+      }
+      else if (primaryController.ButtonL2.pressing())
+      {
+        roller.spin(vex::reverse);
+      }
     }
 
     // fire disk
