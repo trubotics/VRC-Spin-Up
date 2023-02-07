@@ -24,7 +24,7 @@ void FiringPiston::fireDisk(bool skipPreCheck)
 {
   // check preconditions: firing cooldown, flywheel speed
   if (!skipPreCheck && // precheck override
-      (lastFiringTime + 500 > (*Brain).timer(timeUnits::msec) // cooldown (500 ms)
+      (lastFiringTime + 500 > (*Brain).timer(timeUnits::msec) // firing cooldown (500 ms)
       || (*flywheel).velocity(vex::velocityUnits::pct) < 90)) // flywheel speed
   {
     return; // failed prechecks
@@ -32,7 +32,8 @@ void FiringPiston::fireDisk(bool skipPreCheck)
 
   lastFiringTime = (*Brain).timer(timeUnits::msec); // update last firing time
 
+  // fire disk (extend piston and retract after 200 ms)
   (*piston).set(true);
-  wait(200, msec);
+  wait(200, msec); // wait for piston to extend fully
   (*piston).set(false);
 }

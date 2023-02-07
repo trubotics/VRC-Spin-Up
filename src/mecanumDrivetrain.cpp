@@ -7,7 +7,6 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-#include <cmath>
 #include <vex.h>
 #include <mecanumDrivetrain.h>
 
@@ -30,6 +29,7 @@ int32_t rightBackPort, bool rightBackReversed)
     rightBack.setStopping(vex::brakeType::brake);
 }
 
+// Convert the joystick values to motor speeds
 void MecanumDriveTrain::convertMotorValues(int forward, int strafe, int turn, int motorValues[])
 {
     motorValues[0] = forward + strafe + turn; // front left
@@ -39,6 +39,7 @@ void MecanumDriveTrain::convertMotorValues(int forward, int strafe, int turn, in
     return;
 }
 
+// Drive the robot using the joystick values
 void MecanumDriveTrain::drive(int forward, int strafe, int turn)
 {
     int motorValues[4];
