@@ -31,6 +31,7 @@ void FiringPiston::fireDisk(bool skipPreCheck = false)
   }
 
   (*piston).set(true);
+  lastFiringTime = (*Brain).timer(timeUnits::msec);
 }
 
 // Check if the piston should retract (after 100 ms of firing)
