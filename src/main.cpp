@@ -67,10 +67,15 @@ void userControl(void)
   // User control code here, inside the loop
   Brain.Screen.clearScreen();
 
-  // callbacks
-  primaryController.ButtonA.pressed(
+  // callback controls
+  primaryController.ButtonA.pressed( // inverted controls (drive with the intake forward)
       []() {
         driveInverted = !driveInverted;
+      }
+  );
+  primaryController.ButtonR1.pressed( // fire disk
+      []() {
+        firingPiston.fireDisk();
       }
   );
 
@@ -123,12 +128,6 @@ void userControl(void)
       }
     }
 
-    // fire disk
-    if (primaryController.ButtonR1.pressing())
-    {
-      firingPiston.fireDisk();
-    }
-
     // spin flywheel
     if (primaryController.ButtonR2.pressing())
     {
@@ -160,6 +159,5 @@ int main()
   while (true)
   {
     wait(100, msec);
-    firingPiston.checkPistonRetract();
   }
 }

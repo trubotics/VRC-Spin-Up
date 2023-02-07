@@ -3,7 +3,7 @@
 /*    Module:       firingPiston.cpp                                          */
 /*    Author:       Trubotics                                                 */
 /*    Created:      2022-12-13, 10:55:45 p.m.                                 */
-/*    Description:  Pnematics are hard                                        */
+/*    Description:  Pnematics are hard (handles the pnematic disk shooter)    */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -20,26 +20,19 @@ FiringPiston::FiringPiston(brain Brain, motor_group flywheel, vex::triport::port
     this->piston = &p;
 }
 
-double lastFiringTime = -200; // The time when the last disk was fired
 void FiringPiston::fireDisk(bool skipPreCheck)
 {
-  // check preconditions: cooldown (100 ms), flywheel speed
-  if (!skipPreCheck &&                                     // precheck override
-      (lastFiringTime + 200 > (*Brain).timer(timeUnits::msec) // cooldown
-       || (*flywheel).velocity(vex::velocityUnits::pct) < 90)) // flywheel speed
+  // check preconditions: firing cooldown, flywheel speed
+  if (!skipPreCheck && // precheck override
+      (lastFiringTime + 500 > (*Brain).timer(timeUnits::msec) // cooldown (500 ms)
+      || (*flywheel).velocity(vex::velocityUnits::pct) < 90)) // flywheel speed
   {
-    return;
+    return; // failed prechecks
   }
 
-  (*piston).set(true);
-  lastFiringTime = (*Brain).timer(timeUnits::msec);
-}
+  lastFiringTime = (*Brain).timer(timeUnits::msec); // update last firing time
 
-// Check if the piston should retract (after 100 ms of firing)
-void FiringPiston::checkPistonRetract()
-{
-    if (lastFiringTime + 100 > (*Brain).timer(timeUnits::msec))
-    {
-        (*piston).set(false);
-    }
+  (*piston).set(true);
+  wait(200, msec);
+  (*piston).set(false);
 }
