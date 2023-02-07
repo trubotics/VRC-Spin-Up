@@ -68,12 +68,12 @@ void userControl(void)
   Brain.Screen.clearScreen();
 
   // callback controls
-  primaryController.ButtonA.pressed( // inverted controls (drive with the intake forward)
+  primaryController.ButtonA.pressed( // toggle inverted controls (drive with the intake forward) [A]
       []() {
         driveInverted = !driveInverted;
       }
   );
-  primaryController.ButtonR1.pressed( // fire disk
+  primaryController.ButtonR1.pressed( // fire disk (there is a list of preconditions specified in the class) [R1]
       []() {
         firingPiston.fireDisk();
       }
@@ -81,16 +81,16 @@ void userControl(void)
 
   while (1)
   {
-    // arcade drive
+    // arcade drive (left stick controls forward/backward and strafe, right stick controls turning) [LS, RS]
     int forward = primaryController.Axis3.position();
     int strafe = primaryController.Axis4.position();
     int turn = primaryController.Axis1.position();
-    if (driveInverted) // check if controls should be inverted (intake forward)
+    if (driveInverted) // check if controls should be inverted (drive intake forward) [A]
     {
       forward *= -1;
       strafe *= -1;
     }
-    if (primaryController.ButtonX.pressing()) // slow mode (1/3 speed)
+    if (primaryController.ButtonX.pressing()) // slow mode (1/3 speed) [X]
     {
       forward /= 3;
       strafe /= 3;
@@ -98,7 +98,7 @@ void userControl(void)
     }
     drive.drive(forward, strafe, turn);
 
-    // intake
+    // intake (left trigger; top button takes in, bottom button reverses) [L1/L2]
     if (primaryController.ButtonL1.pressing())
     {
       intake.spin(vex::forward);
@@ -112,7 +112,7 @@ void userControl(void)
       intake.stop();
     }
 
-    // roller
+    // roller spinner (left triggers with X held; continues to spin until X is released; top -> up, bot -> down) [L1/L2 + X]
     if (!primaryController.ButtonX.pressing())
     {
       roller.stop();
@@ -128,7 +128,7 @@ void userControl(void)
       }
     }
 
-    // spin flywheel
+    // spin flywheel (hold the button to start spinning, release to stop) [R2]
     if (primaryController.ButtonR2.pressing())
     {
       flywheel.spin(vex::forward);
