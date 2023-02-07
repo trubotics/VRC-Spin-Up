@@ -16,11 +16,12 @@ FiringPiston::FiringPiston(brain Brain, motor_group flywheel, vex::triport::port
 {
     this->Brain = &Brain;
     this->flywheel = &flywheel;
-    piston = &pneumatics(port);
+    pneumatics p = pneumatics(port);
+    this->piston = &p;
 }
 
 double lastFiringTime = -200; // The time when the last disk was fired
-void FiringPiston::fireDisk(bool skipPreCheck = false)
+void FiringPiston::fireDisk(bool skipPreCheck)
 {
   // check preconditions: cooldown (100 ms), flywheel speed
   if (!skipPreCheck &&                                     // precheck override
