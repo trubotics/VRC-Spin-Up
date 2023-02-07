@@ -9,6 +9,7 @@
 
 #include <vex.h>
 #include <mecanumDrivetrain.h>
+#include <firingPiston.h>
 
 using namespace vex;
 
@@ -34,7 +35,7 @@ motor intake = motor(PORT8, ratio6_1, true);
 motor roller = motor(PORT10, ratio6_1, false);
 
 // firing piston
-pneumatics firingPiston = pneumatics(Brain.ThreeWirePort.A);
+FiringPiston firingPiston = FiringPiston(Brain, flywheel, Brain.ThreeWirePort.A);
 
 // flywheel
 motor flywheelFront = motor(PORT11, ratio36_1, false);
@@ -42,25 +43,6 @@ motor flywheelBack = motor(PORT12, ratio36_1, false);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
 /* Global Functions */
-
-double lastFiringTime = -100; // The time when the last disk was fired
-// Fires a disk if the flywheel is spinning fast enough and the cooldown has passed, returns true if a disk was fired
-bool fireDisk(bool skipPreCheck = false)
-{
-  // check preconditions: cooldown (100 ms), flywheel speed
-  if (!skipPreCheck &&                                     // precheck override
-      (lastFiringTime + 100 > Brain.timer(timeUnits::msec) // cooldown
-       || flywheel.velocity(vex::velocityUnits::pct) < 90))
-  { // flywheel speed
-    return false;
-  }
-
-  firingPiston.set(true);
-  firingPiston.set(false);
-
-  lastFiringTime = Brain.timer(timeUnits::msec);
-  return true;
-}
 
 void pre_auton(void)
 {
@@ -144,7 +126,7 @@ void userControl(void)
     // fire disk
     if (primaryController.ButtonR1.pressing())
     {
-      fireDisk();
+      firingPiston.fireDisk();
     }
 
     // spin flywheel
@@ -178,5 +160,6 @@ int main()
   while (true)
   {
     wait(100, msec);
+    firingPiston.checkPistonRetract();
   }
 }
