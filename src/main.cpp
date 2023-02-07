@@ -34,13 +34,13 @@ motor intake = motor(PORT8, ratio6_1, true);
 // roller
 motor roller = motor(PORT10, ratio6_1, false);
 
-// firing piston
-FiringPiston firingPiston = FiringPiston(Brain, flywheel, Brain.ThreeWirePort.A);
-
 // flywheel
 motor flywheelFront = motor(PORT11, ratio36_1, false);
 motor flywheelBack = motor(PORT12, ratio36_1, false);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
+
+// firing piston
+FiringPiston firingPiston = FiringPiston(Brain, flywheel, Brain.ThreeWirePort.A);
 
 /* Global Functions */
 
