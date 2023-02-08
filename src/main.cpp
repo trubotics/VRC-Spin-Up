@@ -40,14 +40,14 @@ motor flywheelBack = motor(PORT12, ratio36_1, false);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
 // firing piston
-Shooter firingPiston = Shooter(Brain, flywheel, Brain.ThreeWirePort.A);
+Shooter shooter = Shooter(Brain, flywheel, Brain.ThreeWirePort.A);
 
 /* Global Functions */
 
 void pre_auton(void)
 {
   // flywheel
-  // velocity managed by firingPiston
+  // velocity managed by shooter
   flywheel.setStopping(vex::brakeType::coast);
 
   //intake
@@ -73,9 +73,19 @@ void userControl(void)
         driveInverted = !driveInverted;
       }
   );
+  primaryController.ButtonUp.pressed( // increase flywheel speed (10% increments) [Up]
+      []() {
+        shooter.changeTargetVelocity(10);
+      }
+  );
+  primaryController.ButtonDown.pressed( // decrease flywheel speed (10% increments) [Down]
+      []() {
+        shooter.changeTargetVelocity(-10);
+      }
+  );
   primaryController.ButtonR1.pressed( // fire disk (there is a list of preconditions specified in the class) [R1]
       []() {
-        firingPiston.fireDisk();
+        shooter.fireDisk();
       }
   );
 
