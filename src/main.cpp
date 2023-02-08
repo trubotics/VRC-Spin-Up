@@ -9,7 +9,7 @@
 
 #include <vex.h>
 #include <mecanumDrivetrain.h>
-#include <firingPiston.h>
+#include <shooter.h>
 
 using namespace vex;
 
@@ -40,14 +40,14 @@ motor flywheelBack = motor(PORT12, ratio36_1, false);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
 // firing piston
-FiringPiston firingPiston = FiringPiston(Brain, flywheel, Brain.ThreeWirePort.A);
+Shooter firingPiston = Shooter(Brain, flywheel, Brain.ThreeWirePort.A);
 
 /* Global Functions */
 
 void pre_auton(void)
 {
   // flywheel
-  flywheel.setVelocity(100, vex::velocityUnits::pct);
+  // velocity managed by firingPiston
   flywheel.setStopping(vex::brakeType::coast);
 
   //intake

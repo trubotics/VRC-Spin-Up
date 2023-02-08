@@ -8,24 +8,31 @@
 /*----------------------------------------------------------------------------*/
 
 #include <vex.h>
-#include <firingPiston.h>
+#include <shooter.h>
 
 using namespace vex;
 
-FiringPiston::FiringPiston(brain Brain, motor_group flywheel, vex::triport::port port)
+Shooter::Shooter(brain Brain, motor_group flywheel, vex::triport::port port)
 {
     this->Brain = &Brain;
     this->flywheel = &flywheel;
+    this->flywheel->setVelocity(targetVelocity, vex::velocityUnits::pct); // set initial flywheel velocity
     pneumatics p = pneumatics(port);
     this->piston = &p;
 }
 
-void FiringPiston::fireDisk(bool skipPreCheck)
+void Shooter::setTargetVelocity(double targetVelocity)
+{
+    this->targetVelocity = targetVelocity;
+    this->flywheel->setVelocity(targetVelocity, vex::velocityUnits::pct);
+}
+
+void Shooter::fireDisk(bool skipPreCheck)
 {
   // check preconditions: firing cooldown, flywheel speed
   if (!skipPreCheck && // precheck override
       ((*Brain).timer(timeUnits::msec) - lastFiringTime <= 400 // firing cooldown (400 ms)
-      || (*flywheel).velocity(vex::velocityUnits::pct) <= 90)) // flywheel speed
+      || abs((*flywheel).velocity(vex::velocityUnits::pct) - targetVelocity)) > 10) // flywheel speed (+- 10%)
   {
     return; // failed prechecks
   }
