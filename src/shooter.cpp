@@ -25,15 +25,15 @@ void Shooter::setTargetVelocity(double targetVelocity)
 {
     this->targetVelocity = targetVelocity;
     this->flywheel->setVelocity(targetVelocity, vex::velocityUnits::pct);
-
-    Brain->Screen.clearScreen();
-    Brain->Screen.setCursor(1, 1);
-    Brain->Screen.print("Target Velocity: %f", targetVelocity);
 }
 void Shooter::changeTargetVelocity(double deltaVelocity)
 {
     this->targetVelocity += deltaVelocity;
     this->flywheel->setVelocity(targetVelocity, vex::velocityUnits::pct);
+
+    Brain->Screen.clearScreen();
+    Brain->Screen.setCursor(1, 1);
+    Brain->Screen.print("Target Velocity: %f", targetVelocity);
 }
 
 void Shooter::fireDisk(bool skipPreCheck)
@@ -41,7 +41,7 @@ void Shooter::fireDisk(bool skipPreCheck)
   // check preconditions: firing cooldown, flywheel speed
   if (!skipPreCheck && // precheck override
       ((*Brain).timer(timeUnits::msec) - lastFiringTime <= 400 // firing cooldown (400 ms)
-      || abs((*flywheel).velocity(vex::velocityUnits::pct) - targetVelocity)) > 10) // flywheel speed (+- 10%)
+      || abs((*flywheel).velocity(vex::velocityUnits::pct) - targetVelocity) > 10)) // flywheel speed (+- 10%)
   {
     return; // failed prechecks
   }
