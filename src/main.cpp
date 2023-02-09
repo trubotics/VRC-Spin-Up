@@ -83,6 +83,16 @@ void userControl(void)
         shooter.changeTargetVelocity(-10);
       }
   );
+  primaryController.ButtonLeft.pressed( // set flywheel speed to the minimum value [Left]
+      []() {
+        shooter.setTargetVelocity(0); // will be overriden by the shooter class
+      }
+  );
+  primaryController.ButtonRight.pressed( // set flywheel speed to the maximum value [Right]
+      []() {
+        shooter.setTargetVelocity(100);
+      }
+  );
   primaryController.ButtonR1.pressed( // fire disk (there is a list of preconditions specified in the class) [R1]
       []() {
         shooter.fireDisk();
