@@ -23,17 +23,16 @@ Shooter::Shooter(brain Brain, motor_group flywheel, vex::triport::port port)
 
 void Shooter::setTargetVelocity(double targetVelocity)
 {
-    this->targetVelocity = targetVelocity;
-    this->flywheel->setVelocity(targetVelocity, vex::velocityUnits::pct);
-}
-void Shooter::changeTargetVelocity(double deltaVelocity)
-{
-    this->targetVelocity += deltaVelocity;
+    this->targetVelocity = fmin(fmax(targetVelocity, 100), 70); // clamp target velocity between 70% and 100%
     this->flywheel->setVelocity(targetVelocity, vex::velocityUnits::pct);
 
     Brain->Screen.clearScreen();
     Brain->Screen.setCursor(1, 1);
     Brain->Screen.print("Target Velocity: %f", targetVelocity);
+}
+void Shooter::changeTargetVelocity(double deltaVelocity)
+{
+    setTargetVelocity(targetVelocity + deltaVelocity);
 }
 
 void Shooter::fireDisk(bool skipPreCheck)
