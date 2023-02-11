@@ -25,7 +25,7 @@ public:
                       int32_t rightBackPort, bool rightBackReversed);
 
     void drive(int forward, int strafe, int turn);
-    void driveFor(int forward, int strafe, int turn, double rotations);
+    void driveFor(int forward, int strafe, int turn, double rotations, double velocity = 100);
 
     bool getMotorLock();
     void setMotorLock(bool lock);

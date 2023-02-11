@@ -12,10 +12,10 @@
 
 using namespace vex;
 
-MecanumDriveTrain::MecanumDriveTrain(int32_t leftFrontPort, bool leftFrontReversed, 
-int32_t leftBackPort, bool leftBackReversed, 
-int32_t rightFrontPort, bool rightFrontReversed, 
-int32_t rightBackPort, bool rightBackReversed)
+MecanumDriveTrain::MecanumDriveTrain(int32_t leftFrontPort, bool leftFrontReversed,
+                                     int32_t leftBackPort, bool leftBackReversed,
+                                     int32_t rightFrontPort, bool rightFrontReversed,
+                                     int32_t rightBackPort, bool rightBackReversed)
 {
     leftFront = motor(leftFrontPort, ratio18_1, leftFrontReversed);
     leftBack = motor(leftBackPort, ratio18_1, leftBackReversed);
@@ -53,16 +53,16 @@ void MecanumDriveTrain::drive(int forward, int strafe, int turn)
 }
 
 // Drive for a certain number of rotations (primarily used for autonomous)
-void MecanumDriveTrain::driveFor(int forward, int strafe, int turn, double rotations)
+void MecanumDriveTrain::driveFor(int forward, int strafe, int turn, double rotations, double velocity)
 {
     rotations /= GEAR_MULTIPLIER;
 
     int motorValues[4];
     convertMotorValues(forward, strafe, turn, motorValues);
-    leftFront.spinFor(rotations * motorValues[0]/100, vex::rotationUnits::rev, false);
-    leftBack.spinFor(rotations * motorValues[1]/100, vex::rotationUnits::rev, false);
-    rightFront.spinFor(rotations * motorValues[2]/100, vex::rotationUnits::rev, false);
-    rightBack.spinFor(rotations * motorValues[3]/100, vex::rotationUnits::rev, false);
+    leftFront.spinFor(rotations * motorValues[0] / 100, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
+    leftBack.spinFor(rotations * motorValues[1] / 100, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
+    rightFront.spinFor(rotations * motorValues[2] / 100, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
+    rightBack.spinFor(rotations * motorValues[3] / 100, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
 
     // Wait for all motors to stop
     while (leftFront.isSpinning() || leftBack.isSpinning() || rightFront.isSpinning() || rightBack.isSpinning())
