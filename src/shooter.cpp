@@ -40,7 +40,7 @@ bool Shooter::fireDisk(bool skipPreCheck)
 {
   // check preconditions: firing cooldown, flywheel speed
   if (!skipPreCheck && // precheck override
-      ((*Brain).timer(timeUnits::msec) - lastFiringTime <= 400 // firing cooldown (400 ms)
+      ((*Brain).timer(timeUnits::msec) - lastFiringTime <= 150 // firing cooldown (400 ms)
       || std::abs((*flywheel).velocity(vex::velocityUnits::pct) - targetVelocity) > 10)) // flywheel speed (+- 10%)
   {
     return false; // failed prechecks
@@ -50,7 +50,7 @@ bool Shooter::fireDisk(bool skipPreCheck)
 
   // fire disk (extend piston and retract after 200 ms)
   (*piston).set(true);
-  wait(200, msec); // wait for piston to extend fully
+  wait(150, msec); // wait for piston to extend fully
   (*piston).set(false);
 
   return true; // success
