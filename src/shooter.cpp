@@ -13,7 +13,7 @@
 
 using namespace vex;
 
-Shooter::Shooter(brain Brain, motor_group flywheel, vex::triport::port port)
+Shooter::Shooter(brain &Brain, motor_group &flywheel, vex::triport::port &port)
 {
     this->Brain = &Brain;
     this->flywheel = &flywheel;

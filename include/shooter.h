@@ -14,7 +14,7 @@ private:
     double lastFiringTime = -200; // The time when the last disk was fired
 
 public:
-    Shooter(brain Brain, motor_group flywheel, vex::triport::port port);
+    Shooter(brain &Brain, motor_group &flywheel, vex::triport::port &port);
 
     void setTargetVelocity(double targetVelocity);
     void changeTargetVelocity(double deltaVelocity); // set target velocity to current velocity + deltaVelocity
