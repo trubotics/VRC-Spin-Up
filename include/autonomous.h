@@ -1,6 +1,7 @@
 #ifndef AUTONOMOUS_H
 #define AUTONOMOUS_H
 
+#include <map>
 #include <vex.h>
 #include <mecanumDrivetrain.h>
 #include <shooter.h>
@@ -41,7 +42,7 @@ public:
 
     void run();
 
-    Strategy getStrategy();
+    char* getStrategy();
 };
 
 #endif

@@ -18,9 +18,16 @@ Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor &roller
     this->roller = &roller;
 }
 
-Strategy Autonomous::getStrategy()
+char* Autonomous::getStrategy()
 {
-    return Autonomous::STRATEGY;
+    // map strategy to string
+    std::map<Strategy, char*> strategyMap = {
+        {Strategy::None, "None"},
+        {Strategy::LoaderRoller, "Loader Roller"},
+        {Strategy::SideRoller, "Side Roller"},
+    };
+
+    return strategyMap[Autonomous::STRATEGY];
 }
 
 // Rolls the roller
