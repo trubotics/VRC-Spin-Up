@@ -22,11 +22,8 @@ int32_t rightBackPort, bool rightBackReversed)
     rightFront = motor(rightFrontPort, ratio18_1, rightFrontReversed);
     rightBack = motor(rightBackPort, ratio18_1, rightBackReversed);
 
-    // set brake modes
-    leftFront.setStopping(vex::brakeType::brake);
-    leftBack.setStopping(vex::brakeType::brake);
-    rightFront.setStopping(vex::brakeType::brake);
-    rightBack.setStopping(vex::brakeType::brake);
+    // set initial brake modes
+    setMotorLock(true);
 }
 
 // Convert the joystick values to motor speeds
@@ -36,7 +33,6 @@ void MecanumDriveTrain::convertMotorValues(int forward, int strafe, int turn, in
     motorValues[1] = forward - strafe + turn; // back left
     motorValues[2] = forward - strafe - turn; // front right
     motorValues[3] = forward + strafe - turn; // back right
-    return;
 }
 
 // Drive the robot using the joystick values
@@ -48,7 +44,46 @@ void MecanumDriveTrain::drive(int forward, int strafe, int turn)
     leftBack.spin(vex::forward, motorValues[1], vex::percent);
     rightFront.spin(vex::forward, motorValues[2], vex::percent);
     rightBack.spin(vex::forward, motorValues[3], vex::percent);
-    return;
 }
 
-// TODO: add more drive functions as needed (for autonomous period, etc.)
+// Drive for a certain number of rotations (primarily used for autonomous)
+void MecanumDriveTrain::driveFor(int forward, int strafe, int turn, double rotations)
+{
+    int motorValues[4];
+    convertMotorValues(forward, strafe, turn, motorValues);
+    leftFront.spinFor(rotations * motorValues[0], vex::rotationUnits::rev, false);
+    leftBack.spinFor(rotations * motorValues[1], vex::rotationUnits::rev, false);
+    rightFront.spinFor(rotations * motorValues[2], vex::rotationUnits::rev, false);
+    rightBack.spinFor(rotations * motorValues[3], vex::rotationUnits::rev, false);
+
+    // Wait for all motors to stop
+    while (leftFront.isSpinning() || leftBack.isSpinning() || rightFront.isSpinning() || rightBack.isSpinning())
+    {
+        vex::task::sleep(10);
+    }
+}
+
+// Functions to get/set whether the motors hold/lock position or use natural breaking
+bool MecanumDriveTrain::getMotorLock()
+{
+    return motorLock;
+}
+void MecanumDriveTrain::setMotorLock(bool lock)
+{
+    if (lock)
+    {
+        leftFront.setStopping(vex::brakeType::hold);
+        leftBack.setStopping(vex::brakeType::hold);
+        rightFront.setStopping(vex::brakeType::hold);
+        rightBack.setStopping(vex::brakeType::hold);
+    }
+    else
+    {
+        leftFront.setStopping(vex::brakeType::brake);
+        leftBack.setStopping(vex::brakeType::brake);
+        rightFront.setStopping(vex::brakeType::brake);
+        rightBack.setStopping(vex::brakeType::brake);
+    }
+
+    motorLock = lock;
+}
