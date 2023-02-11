@@ -7,6 +7,7 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
+#include <cmath>
 #include <vex.h>
 #include <shooter.h>
 
@@ -40,7 +41,7 @@ void Shooter::fireDisk(bool skipPreCheck)
   // check preconditions: firing cooldown, flywheel speed
   if (!skipPreCheck && // precheck override
       ((*Brain).timer(timeUnits::msec) - lastFiringTime <= 400 // firing cooldown (400 ms)
-      || abs((*flywheel).velocity(vex::velocityUnits::pct) - targetVelocity) > 10)) // flywheel speed (+- 10%)
+      || std::abs((*flywheel).velocity(vex::velocityUnits::pct) - targetVelocity) > 10)) // flywheel speed (+- 10%)
   {
     return; // failed prechecks
   }
