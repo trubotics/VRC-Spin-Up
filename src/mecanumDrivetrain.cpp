@@ -22,6 +22,12 @@ int32_t rightBackPort, bool rightBackReversed)
     rightFront = motor(rightFrontPort, ratio18_1, rightFrontReversed);
     rightBack = motor(rightBackPort, ratio18_1, rightBackReversed);
 
+    // default to max velocity
+    leftFront.setVelocity(100, vex::velocityUnits::pct);
+    leftBack.setVelocity(100, vex::velocityUnits::pct);
+    rightFront.setVelocity(100, vex::velocityUnits::pct);
+    rightBack.setVelocity(100, vex::velocityUnits::pct);
+
     // set initial brake modes
     setMotorLock(true);
 }
@@ -49,6 +55,8 @@ void MecanumDriveTrain::drive(int forward, int strafe, int turn)
 // Drive for a certain number of rotations (primarily used for autonomous)
 void MecanumDriveTrain::driveFor(int forward, int strafe, int turn, double rotations)
 {
+    rotations /= GEAR_MULTIPLIER;
+
     int motorValues[4];
     convertMotorValues(forward, strafe, turn, motorValues);
     leftFront.spinFor(rotations * motorValues[0], vex::rotationUnits::rev, false);

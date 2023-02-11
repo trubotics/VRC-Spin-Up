@@ -60,12 +60,14 @@ void pre_auton(void)
 void autonomous(void)
 {
   Brain.Screen.clearScreen();
+  drive.driveFor(100, 0, 100, 1);
 }
 
 void userControl(void)
 {
   // User control code here, inside the loop
   Brain.Screen.clearScreen();
+  drive.setMotorLock(false); // unlock the drivetrain
 
   // callback controls
   primaryController.ButtonA.pressed( // toggle inverted controls (drive with the intake forward) [A]
@@ -97,6 +99,11 @@ void userControl(void)
       []()
       {
         shooter.fireDisk();
+      });
+  primaryController.ButtonB.pressed( // toggle drivetrain lock (sets brake mode to hold) [B]
+      []()
+      {
+        drive.setMotorLock(!drive.getMotorLock());
       });
 
   while (1)
