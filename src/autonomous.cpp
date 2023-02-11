@@ -59,11 +59,18 @@ void Autonomous::run()
     case Strategy::None:
         break;
     case Strategy::LoaderRoller:
+        // move a little left to get into position
+        drive->driveFor(0, -100, 0, 0.5);
         rollRoller();
         // turn 30 degrees to the left and fire two disks
         drive->driveFor(10, 0, -100, 0.25);
         break;
     case Strategy::SideRoller:
+        // move one tile right to roller
+        drive->driveFor(0, 100, 0, 2.5);
+        rollRoller();
+        // turn 30 degrees to the right and fire two disks
+        drive->driveFor(10, 0, 100, 0.25);
         break;
     }
 }
