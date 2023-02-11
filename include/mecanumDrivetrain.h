@@ -7,7 +7,7 @@ using namespace vex;
 class MecanumDriveTrain
 {
 private:
-    const double GEAR_MULTIPLIER = 4;
+    const double GEAR_MULTIPLIER = 1.4;
 
     motor leftFront = NULL;
     motor leftBack = NULL;

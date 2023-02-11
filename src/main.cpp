@@ -60,7 +60,6 @@ void pre_auton(void)
 void autonomous(void)
 {
   Brain.Screen.clearScreen();
-  drive.driveFor(100, 0, 100, 1);
 }
 
 void userControl(void)
