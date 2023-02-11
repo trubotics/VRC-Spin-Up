@@ -28,7 +28,7 @@ class Autonomous
 {
 private:
     const bool IS_BLUE = true;
-    const Strategy STRATEGY = Strategy::None;
+    const Strategy STRATEGY = Strategy::LoaderRoller;
 
     MecanumDriveTrain *drive = nullptr;
     Shooter *shooter = nullptr;

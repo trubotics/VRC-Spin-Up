@@ -8,6 +8,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include <vex.h>
+#include <autonomous.h>
 #include <mecanumDrivetrain.h>
 #include <shooter.h>
 
@@ -42,6 +43,9 @@ motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 // firing piston
 Shooter shooter = Shooter(Brain, flywheel, Brain.ThreeWirePort.A);
 
+// initialize autonomous class
+Autonomous autonomous = Autonomous(drive, shooter, roller);
+
 /* Global Functions */
 
 void pre_auton(void)
@@ -55,11 +59,6 @@ void pre_auton(void)
 
   // roller
   roller.setVelocity(25, vex::velocityUnits::pct);
-}
-
-void autonomous(void)
-{
-  Brain.Screen.clearScreen();
 }
 
 void userControl(void)
@@ -176,7 +175,11 @@ void userControl(void)
 int main()
 {
   // Set up callbacks for autonomous and driver control periods.
-  Competition.autonomous(autonomous);
+  Competition.autonomous([]() { 
+    Brain.Screen.clearScreen();
+    Brain.Screen.print(autonomous.getStrategy());
+    autonomous.run(); 
+  });
   Competition.drivercontrol(userControl);
 
   // Run the pre-autonomous function.

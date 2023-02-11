@@ -27,12 +27,12 @@ Strategy Autonomous::getStrategy()
 void Autonomous::rollRoller()
 {
     // "creep" to roller
-    drive->drive(15, 0, 0);
+    drive->drive(-15, 0, 0);
     waitUntil(drive->getAvgTorque() > 0.5);
 
     // continue driving into the roller very gently and roll the roller
-    drive->drive(5, 0, 0);
-    roller->spinFor(0.5, vex::rotationUnits::rev, 100, vex::velocityUnits::pct);
+    drive->drive(-5, 0, 0);
+    roller->spinFor(0.5, vex::rotationUnits::rev, 25, vex::velocityUnits::pct);
     drive->drive(0, 0, 0);
 }
 
@@ -50,6 +50,7 @@ void Autonomous::run()
     case Strategy::None:
         break;
     case Strategy::LoaderRoller:
+        rollRoller();
         break;
     case Strategy::SideRoller:
         break;
