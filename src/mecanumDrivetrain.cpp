@@ -36,7 +36,6 @@ void MecanumDriveTrain::convertMotorValues(int forward, int strafe, int turn, in
     motorValues[1] = forward - strafe + turn; // back left
     motorValues[2] = forward - strafe - turn; // front right
     motorValues[3] = forward + strafe - turn; // back right
-    return;
 }
 
 // Drive the robot using the joystick values
@@ -48,7 +47,6 @@ void MecanumDriveTrain::drive(int forward, int strafe, int turn)
     leftBack.spin(vex::forward, motorValues[1], vex::percent);
     rightFront.spin(vex::forward, motorValues[2], vex::percent);
     rightBack.spin(vex::forward, motorValues[3], vex::percent);
-    return;
 }
 
 // TODO: add more drive functions as needed (for autonomous period, etc.)

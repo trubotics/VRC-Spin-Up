@@ -10,7 +10,7 @@ private:
     brain *Brain = nullptr;
     motor_group *flywheel = nullptr;
     pneumatics *piston = nullptr;
-    double targetVelocity = 80; // The velocity the flywheel should be at to fire
+    double targetVelocity = 80;   // The velocity the flywheel should be at to fire
     double lastFiringTime = -200; // The time when the last disk was fired
 
 public:

@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
-/*    Module:       shooter.cpp                                          */
+/*    Module:       shooter.cpp                                               */
 /*    Author:       Trubotics                                                 */
 /*    Created:      2022-12-13, 10:55:45 p.m.                                 */
 /*    Description:  Pnematics are hard (handles the pnematic disk shooter)    */

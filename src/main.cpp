@@ -50,7 +50,7 @@ void pre_auton(void)
   // velocity managed by shooter
   flywheel.setStopping(vex::brakeType::coast);
 
-  //intake
+  // intake
   intake.setVelocity(100, vex::velocityUnits::pct);
 
   // roller
@@ -69,35 +69,35 @@ void userControl(void)
 
   // callback controls
   primaryController.ButtonA.pressed( // toggle inverted controls (drive with the intake forward) [A]
-      []() {
+      []()
+      {
         driveInverted = !driveInverted;
-      }
-  );
+      });
   primaryController.ButtonUp.pressed( // increase flywheel speed (10% increments) [Up]
-      []() {
+      []()
+      {
         shooter.changeTargetVelocity(10);
-      }
-  );
+      });
   primaryController.ButtonDown.pressed( // decrease flywheel speed (10% increments) [Down]
-      []() {
+      []()
+      {
         shooter.changeTargetVelocity(-10);
-      }
-  );
+      });
   primaryController.ButtonLeft.pressed( // set flywheel speed to the minimum value [Left]
-      []() {
+      []()
+      {
         shooter.setTargetVelocity(0); // will be overriden by the shooter class
-      }
-  );
+      });
   primaryController.ButtonRight.pressed( // set flywheel speed to the maximum value [Right]
-      []() {
+      []()
+      {
         shooter.setTargetVelocity(100);
-      }
-  );
+      });
   primaryController.ButtonR1.pressed( // fire disk (there is a list of preconditions specified in the class) [R1]
-      []() {
+      []()
+      {
         shooter.fireDisk();
-      }
-  );
+      });
 
   while (1)
   {
@@ -137,7 +137,8 @@ void userControl(void)
     {
       roller.stop();
     }
-    else {
+    else
+    {
       if (primaryController.ButtonL1.pressing())
       {
         roller.spin(vex::forward);
