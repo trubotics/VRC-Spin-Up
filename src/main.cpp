@@ -44,7 +44,7 @@ motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 Shooter shooter = Shooter(Brain, flywheel, Brain.ThreeWirePort.A);
 
 // initialize autonomous class
-Autonomous autonomous = Autonomous(drive, shooter, roller);
+Autonomous autonomous = Autonomous(drive, shooter, flywheel, roller);
 
 /* Global Functions */
 

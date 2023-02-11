@@ -60,6 +60,8 @@ void Autonomous::run()
         break;
     case Strategy::LoaderRoller:
         rollRoller();
+        // turn 30 degrees to the left and fire two disks
+        drive->driveFor(5, 0, 100, 0.25);
         break;
     case Strategy::SideRoller:
         break;
