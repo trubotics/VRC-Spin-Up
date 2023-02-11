@@ -18,7 +18,7 @@ public:
 
     void setTargetVelocity(double targetVelocity);
     void changeTargetVelocity(double deltaVelocity); // set target velocity to current velocity + deltaVelocity
-    void fireDisk(bool skipPreCheck = false);
+    bool fireDisk(bool skipPreCheck = false);
 };
 
 #endif

@@ -36,14 +36,14 @@ void Shooter::changeTargetVelocity(double deltaVelocity)
     setTargetVelocity(targetVelocity + deltaVelocity);
 }
 
-void Shooter::fireDisk(bool skipPreCheck)
+bool Shooter::fireDisk(bool skipPreCheck)
 {
   // check preconditions: firing cooldown, flywheel speed
   if (!skipPreCheck && // precheck override
       ((*Brain).timer(timeUnits::msec) - lastFiringTime <= 400 // firing cooldown (400 ms)
       || std::abs((*flywheel).velocity(vex::velocityUnits::pct) - targetVelocity) > 10)) // flywheel speed (+- 10%)
   {
-    return; // failed prechecks
+    return false; // failed prechecks
   }
 
   lastFiringTime = (*Brain).timer(timeUnits::msec); // update last firing time
@@ -52,4 +52,6 @@ void Shooter::fireDisk(bool skipPreCheck)
   (*piston).set(true);
   wait(200, msec); // wait for piston to extend fully
   (*piston).set(false);
+
+  return true; // success
 }

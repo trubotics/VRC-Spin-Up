@@ -29,6 +29,8 @@ public:
 
     bool getMotorLock();
     void setMotorLock(bool lock);
+
+    double getAvgTorque();
 };
 
 #endif

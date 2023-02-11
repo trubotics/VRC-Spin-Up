@@ -95,3 +95,9 @@ void MecanumDriveTrain::setMotorLock(bool lock)
 
     motorLock = lock;
 }
+
+// Get the average torque of all motors
+double MecanumDriveTrain::getAvgTorque()
+{
+    return (leftFront.torque() + leftBack.torque() + rightFront.torque() + rightBack.torque()) / 4;
+}
