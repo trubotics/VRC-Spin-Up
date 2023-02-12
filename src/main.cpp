@@ -59,6 +59,11 @@ void pre_auton(void)
 
   // roller
   roller.setVelocity(25, vex::velocityUnits::pct);
+
+  // display autonomous mode
+  Brain.Screen.clearScreen();
+  Brain.Screen.setCursor(1, 1);
+  Brain.Screen.print(autonomous.getStrategy());
 }
 
 void userControl(void)
