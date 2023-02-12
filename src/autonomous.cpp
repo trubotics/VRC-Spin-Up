@@ -54,7 +54,9 @@ void Autonomous::fireDisk(int count, double velocity)
     // fire disks when possible
     for (int i = 0; i < count; i++)
     {
-        waitUntil(shooter->fireDisk()); // wait until disk is fired successfully
+        // manually wait for flywheel to spin up
+        wait(1, sec);
+        waitUntil(shooter->fireDisk(true)); // wait until disk is fired successfully
     }
 
     // stop flywheel
