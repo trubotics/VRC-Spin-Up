@@ -74,7 +74,6 @@ void Autonomous::run()
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
         fireDisk();
-        fireDisk();
         break;
     case Strategy::SideRoller:
         // move one tile right to roller
@@ -82,7 +81,6 @@ void Autonomous::run()
         rollRoller();
         // move forward and right slightly and fire two disks
         drive->driveFor(100, 50, 50, 0.25);
-        fireDisk();
         fireDisk();
         break;
     }
