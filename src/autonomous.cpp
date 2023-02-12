@@ -79,7 +79,7 @@ void Autonomous::run()
         // move one tile right to roller
         drive->driveFor(0, 100, 0, 2.5);
         rollRoller();
-        // move forward and right slightly and fire two disks
+        // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
         fireDisk();
         break;
