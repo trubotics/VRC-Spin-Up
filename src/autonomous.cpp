@@ -80,7 +80,7 @@ void Autonomous::run()
         drive->driveFor(0, 100, 0, 2.5);
         rollRoller();
         // move forward and right slightly and fire two disks
-        drive->driveFor(100, 50, 50, 0.25);
+        drive->driveFor(100, 0, 0, 0.25);
         fireDisk();
         break;
     }
