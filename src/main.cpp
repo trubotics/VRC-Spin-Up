@@ -106,7 +106,7 @@ void userControl(void)
     // primary controller drives intake forward (negative values), secondary drives shooter forwards (positive values)
     int forward = -primaryController.Axis3.position();
     int strafe = -primaryController.Axis4.position();
-    int turn = -primaryController.Axis1.position();
+    int turn = primaryController.Axis1.position();
     if (abs(forward) + abs(strafe) + abs(turn) <= 9) // if primary unused, use secondary values
     {
       forward = secondaryController.Axis3.position();
