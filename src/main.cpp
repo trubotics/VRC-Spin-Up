@@ -107,7 +107,7 @@ void userControl(void)
     int forward = -primaryController.Axis3.position();
     int strafe = -primaryController.Axis4.position();
     int turn = -primaryController.Axis1.position();
-    if (std::abs(forward) + std::abs(strafe) + std::abd(turn) <= 9) // if primary unused, use secondary values
+    if (abs(forward) + abs(strafe) + abs(turn) <= 9) // if primary unused, use secondary values
     {
       forward = secondaryController.Axis3.position();
       strafe = secondaryController.Axis4.position();
