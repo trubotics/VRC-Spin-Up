@@ -35,8 +35,8 @@ char* Autonomous::getStrategy()
 void Autonomous::rollRoller()
 {
     // "creep" to roller
-    drive->drive(-15, 0, 0);
-    waitUntil(drive->getAvgTorque() > 0.6);
+    drive->drive(-30, 0, 0);
+    waitUntil(drive->getAvgTorque() > 0.5);
 
     // continue driving into the roller very gently and roll the roller
     drive->drive(-10, 0, 0);
