@@ -24,7 +24,7 @@ Shooter::Shooter(brain Brain, motor_group flywheel, vex::triport::port port)
 
 void Shooter::setTargetVelocity(double targetVelocity)
 {
-    this->targetVelocity = fmin(fmax(targetVelocity, 100), 70); // clamp target velocity between 70% and 100%
+    this->targetVelocity = fmin(fmax(targetVelocity, 70), 100); // clamp target velocity between 70% and 100%
     this->flywheel->setVelocity(targetVelocity, vex::velocityUnits::pct);
 
     Brain->Screen.clearScreen();
