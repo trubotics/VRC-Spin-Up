@@ -107,7 +107,7 @@ void userControl(void)
     int forward = -primaryController.Axis3.position();
     int strafe = -primaryController.Axis4.position();
     int turn = -primaryController.Axis1.position();
-    if (forward + strafe + turn <= 1) // if primary unused, use secondary values
+    if (std::abs(forward) + std::abs(strafe) + std::abd(turn) <= 9) // if primary unused, use secondary values
     {
       forward = secondaryController.Axis3.position();
       strafe = secondaryController.Axis4.position();
@@ -121,12 +121,12 @@ void userControl(void)
     }
     drive.drive(forward, strafe, turn);
 
-    // intake (left trigger; top button takes in, bottom button reverses) [L1/L2]
-    if (primaryController.ButtonL1.pressing())
+    // intake (left trigger; top button takes in, bottom button reverses) [R1/R2]
+    if (primaryController.ButtonR1.pressing())
     {
       intake.spin(vex::forward);
     }
-    else if (primaryController.ButtonL2.pressing())
+    else if (primaryController.ButtonR2.pressing())
     {
       intake.spin(vex::reverse);
     }
@@ -135,13 +135,12 @@ void userControl(void)
       intake.stop();
     }
 
-    // roller sinner (primary) (top -> up, bot -> down) [R1/R2]
-    // roller spinner (secondary) (top -> up, bot -> down) [L1/L2]
-    if (primaryController.ButtonR1.pressing() || secondaryController.ButtonL1.pressing())
+    // roller spinner (top -> up, bot -> down) [L1/L2]
+    if (primaryController.ButtonL1.pressing() || secondaryController.ButtonL1.pressing())
     {
       roller.spin(vex::forward);
     }
-    else if (primaryController.ButtonR2.pressing() || secondaryController.ButtonL2.pressing())
+    else if (primaryController.ButtonL2.pressing() || secondaryController.ButtonL2.pressing())
     {
       roller.spin(vex::reverse);
     }
