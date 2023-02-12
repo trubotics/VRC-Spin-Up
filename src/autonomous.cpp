@@ -47,12 +47,18 @@ void Autonomous::rollRoller()
 // Spins up the flywheel and fires a disk
 void Autonomous::fireDisk(int count, double velocity)
 {
+    // spin up flywheel to speed
+    shooter->setTargetVelocity(velocity);
+    flywheel->spin(vex::directionType::fwd);
+
+    // fire disks when possible
     for (int i = 0; i < count; i++)
     {
-        shooter->setTargetVelocity(velocity);
-        flywheel->spin(vex::directionType::fwd);
         waitUntil(shooter->fireDisk()); // wait until disk is fired successfully
     }
+
+    // stop flywheel
+    flywheel->stop();
 }
 
 void Autonomous::run()
