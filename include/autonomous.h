@@ -37,7 +37,7 @@ private:
     motor *roller = nullptr;
 
     void rollRoller();
-    void fireDisk(double velocity = 100);
+    void fireDisk(int count = 2, double velocity = 100);
 public:
     Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &flywheel, motor &roller);
 
