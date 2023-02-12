@@ -28,7 +28,6 @@ controller secondaryController = controller(partner);
 
 // drive train
 MecanumDriveTrain drive = MecanumDriveTrain(PORT15, true, PORT16, true, PORT5, false, PORT6, false);
-bool driveInverted = false;
 
 // intake
 motor intake = motor(PORT8, ratio6_1, true);
@@ -69,7 +68,7 @@ void userControl(void)
   drive.setMotorLock(false); // unlock the drivetrain
 
   // callback controls
-    primaryController.ButtonB.pressed( // toggle drivetrain lock (sets brake mode to hold) [B]
+    primaryController.ButtonX.pressed( // toggle drivetrain lock (sets brake mode to hold) [X]
       []()
       {
         drive.setMotorLock(!drive.getMotorLock());
@@ -114,7 +113,7 @@ void userControl(void)
       strafe = secondaryController.Axis4.position();
       turn = secondaryController.Axis1.position();
     }
-    if (primaryController.ButtonX.pressing() || secondaryController.ButtonX.pressing()) // slow mode (1/3 speed) [X]
+    if (primaryController.ButtonB.pressing() || secondaryController.ButtonB.pressing()) // slow mode (1/3 speed) [B]
     {
       forward /= 3;
       strafe /= 3;
@@ -136,14 +135,19 @@ void userControl(void)
       intake.stop();
     }
 
-    // roller spinner (left triggers with X held; continues to spin until X is released; top -> up, bot -> down) [L1/L2 + X]
-    if (secondaryController.ButtonL1.pressing())
+    // roller sinner (primary) (top -> up, bot -> down) [R1/R2]
+    // roller spinner (secondary) (top -> up, bot -> down) [L1/L2]
+    if (primaryController.ButtonR1.pressing() || secondaryController.ButtonL1.pressing())
     {
       roller.spin(vex::forward);
     }
-    else if (secondaryController.ButtonL2.pressing())
+    else if (primaryController.ButtonR2.pressing() || secondaryController.ButtonL2.pressing())
     {
       roller.spin(vex::reverse);
+    }
+    else
+    {
+      roller.stop();
     }
 
     // spin flywheel (hold the button to start spinning, release to stop) [R2]
