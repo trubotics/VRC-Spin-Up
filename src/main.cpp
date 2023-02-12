@@ -24,10 +24,10 @@ brain Brain = brain();
 
 // controller
 controller primaryController = controller(primary);
+controller secondaryController = controller(partner);
 
 // drive train
 MecanumDriveTrain drive = MecanumDriveTrain(PORT15, true, PORT16, true, PORT5, false, PORT6, false);
-bool driveInverted = false;
 
 // intake
 motor intake = motor(PORT8, ratio6_1, true);
@@ -68,54 +68,52 @@ void userControl(void)
   drive.setMotorLock(false); // unlock the drivetrain
 
   // callback controls
-  primaryController.ButtonA.pressed( // toggle inverted controls (drive with the intake forward) [A]
+    primaryController.ButtonX.pressed( // toggle drivetrain lock (sets brake mode to hold) [X]
       []()
       {
-        driveInverted = !driveInverted;
+        drive.setMotorLock(!drive.getMotorLock());
       });
-  primaryController.ButtonUp.pressed( // increase flywheel speed (10% increments) [Up]
-      []()
-      {
-        shooter.changeTargetVelocity(10);
-      });
-  primaryController.ButtonDown.pressed( // decrease flywheel speed (10% increments) [Down]
-      []()
-      {
-        shooter.changeTargetVelocity(-10);
-      });
-  primaryController.ButtonLeft.pressed( // set flywheel speed to the minimum value [Left]
-      []()
-      {
-        shooter.setTargetVelocity(0); // will be overriden by the shooter class
-      });
-  primaryController.ButtonRight.pressed( // set flywheel speed to the maximum value [Right]
+    
+  secondaryController.ButtonUp.pressed( // increase flywheel speed (10% increments) [Up]
       []()
       {
         shooter.setTargetVelocity(100);
       });
-  primaryController.ButtonR1.pressed( // fire disk (there is a list of preconditions specified in the class) [R1]
+  secondaryController.ButtonDown.pressed( // decrease flywheel speed (10% increments) [Down]
+      []()
+      {
+        shooter.setTargetVelocity(70);
+      });
+  secondaryController.ButtonLeft.pressed( // set flywheel speed to the minimum value [Left]
+      []()
+      {
+        shooter.setTargetVelocity(80); // will be overriden by the shooter class
+      });
+  secondaryController.ButtonRight.pressed( // set flywheel speed to the maximum value [Right]
+      []()
+      {
+        shooter.setTargetVelocity(90);
+      });
+  secondaryController.ButtonR1.pressed( // fire disk (there is a list of preconditions specified in the class) [R1]
       []()
       {
         shooter.fireDisk();
-      });
-  primaryController.ButtonB.pressed( // toggle drivetrain lock (sets brake mode to hold) [B]
-      []()
-      {
-        drive.setMotorLock(!drive.getMotorLock());
       });
 
   while (1)
   {
     // arcade drive (left stick controls forward/backward and strafe, right stick controls turning) [LS, RS]
-    int forward = primaryController.Axis3.position();
-    int strafe = primaryController.Axis4.position();
-    int turn = primaryController.Axis1.position();
-    if (driveInverted) // check if controls should be inverted (drive intake forward) [A]
+    // primary controller drives intake forward (negative values), secondary drives shooter forwards (positive values)
+    int forward = -primaryController.Axis3.position();
+    int strafe = -primaryController.Axis4.position();
+    int turn = -primaryController.Axis1.position();
+    if (std::abs(forward) + std::abs(strafe) + std::abd(turn) <= 9) // if primary unused, use secondary values
     {
-      forward *= -1;
-      strafe *= -1;
+      forward = secondaryController.Axis3.position();
+      strafe = secondaryController.Axis4.position();
+      turn = secondaryController.Axis1.position();
     }
-    if (primaryController.ButtonX.pressing()) // slow mode (1/3 speed) [X]
+    if (primaryController.ButtonB.pressing() || secondaryController.ButtonB.pressing()) // slow mode (1/3 speed) [B]
     {
       forward /= 3;
       strafe /= 3;
@@ -123,12 +121,12 @@ void userControl(void)
     }
     drive.drive(forward, strafe, turn);
 
-    // intake (left trigger; top button takes in, bottom button reverses) [L1/L2]
-    if (primaryController.ButtonL1.pressing())
+    // intake (left trigger; top button takes in, bottom button reverses) [R1/R2]
+    if (primaryController.ButtonR1.pressing())
     {
       intake.spin(vex::forward);
     }
-    else if (primaryController.ButtonL2.pressing())
+    else if (primaryController.ButtonR2.pressing())
     {
       intake.spin(vex::reverse);
     }
@@ -137,25 +135,22 @@ void userControl(void)
       intake.stop();
     }
 
-    // roller spinner (left triggers with X held; continues to spin until X is released; top -> up, bot -> down) [L1/L2 + X]
-    if (!primaryController.ButtonX.pressing())
+    // roller spinner (top -> up, bot -> down) [L1/L2]
+    if (primaryController.ButtonL1.pressing() || secondaryController.ButtonL1.pressing())
     {
-      roller.stop();
+      roller.spin(vex::forward);
+    }
+    else if (primaryController.ButtonL2.pressing() || secondaryController.ButtonL2.pressing())
+    {
+      roller.spin(vex::reverse);
     }
     else
     {
-      if (primaryController.ButtonL1.pressing())
-      {
-        roller.spin(vex::forward);
-      }
-      else if (primaryController.ButtonL2.pressing())
-      {
-        roller.spin(vex::reverse);
-      }
+      roller.stop();
     }
 
     // spin flywheel (hold the button to start spinning, release to stop) [R2]
-    if (primaryController.ButtonR2.pressing())
+    if (secondaryController.ButtonR2.pressing())
     {
       flywheel.spin(vex::forward);
     }
