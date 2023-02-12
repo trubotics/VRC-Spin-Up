@@ -19,10 +19,10 @@ Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &
     this->roller = &roller;
 }
 
-char* Autonomous::getStrategy()
+char *Autonomous::getStrategy()
 {
     // map strategy to string
-    std::map<Strategy, char*> strategyMap = {
+    std::map<Strategy, char *> strategyMap = {
         {Strategy::None, "None"},
         {Strategy::LoaderRoller, "Loader Roller"},
         {Strategy::SideRoller, "Side Roller"},
@@ -45,11 +45,14 @@ void Autonomous::rollRoller()
 }
 
 // Spins up the flywheel and fires a disk
-void Autonomous::fireDisk(double velocity)
+void Autonomous::fireDisk(int count, double velocity)
 {
-    shooter->setTargetVelocity(velocity);
-    flywheel->spin(vex::directionType::fwd);
-    waitUntil(shooter->fireDisk()); // wait until disk is fired successfully
+    for (int i = 0; i < count; i++)
+    {
+        shooter->setTargetVelocity(velocity);
+        flywheel->spin(vex::directionType::fwd);
+        waitUntil(shooter->fireDisk()); // wait until disk is fired successfully
+    }
 }
 
 void Autonomous::run()
@@ -62,15 +65,19 @@ void Autonomous::run()
         // move a little left to get into position
         drive->driveFor(0, -100, 0, 0.5);
         rollRoller();
-        // turn 30 degrees to the left and fire two disks
-        drive->driveFor(10, 0, -100, 0.25);
+        // move forward slightly and fire two disks
+        drive->driveFor(100, 0, 0, 0.25);
+        fireDisk();
+        fireDisk();
         break;
     case Strategy::SideRoller:
         // move one tile right to roller
         drive->driveFor(0, 100, 0, 2.5);
         rollRoller();
-        // turn 30 degrees to the right and fire two disks
-        drive->driveFor(10, 0, 100, 0.25);
+        // move forward and right slightly and fire two disks
+        drive->driveFor(100, 50, 50, 0.25);
+        fireDisk();
+        fireDisk();
         break;
     }
 }
