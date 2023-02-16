@@ -41,11 +41,11 @@ void Shooter::updateVelocity()
 
     // for derivative
     double derivative = 0;
+    double currentTime = Brain->timer(timeUnits::msec);
     if (lastTime==0) {
-      lastTime = Brain->timer(timeUnits::msec);
+      lastTime = currentTime;
       lastError = error;
     } else {
-      double currentTime = Brain->timer(timeUnits::msec);
       double deltaTime = currentTime - lastTime;
       derivative = (error - lastError) / (currentTime - lastTime) * kD;
     }
