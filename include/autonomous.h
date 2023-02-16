@@ -1,6 +1,7 @@
 #ifndef AUTONOMOUS_H
 #define AUTONOMOUS_H
 
+#include <string>
 #include <map>
 #include <vex.h>
 #include <mecanumDrivetrain.h>
@@ -28,8 +29,14 @@ enum class Strategy
 class Autonomous
 {
 private:
-    const bool IS_BLUE = true;
-    const Strategy STRATEGY = Strategy::LoaderRoller;
+    // Strategy map to string
+    std::map<Strategy, std::string> strategyMap = {
+        {Strategy::None, "None"},
+        {Strategy::LoaderRoller, "Loader Roller"},
+        {Strategy::SideRoller, "Side Roller"},
+    };
+
+    Strategy strategy = DEFAULT_STRATEGY;
 
     MecanumDriveTrain *drive = nullptr;
     Shooter *shooter = nullptr;
@@ -38,11 +45,16 @@ private:
     void rollRoller();
     void fireDisk(int count = 2, double velocity = 100);
 public:
+    static const Strategy DEFAULT_STRATEGY = Strategy::LoaderRoller;
+
     Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor &roller);
 
     void run();
 
-    char* getStrategy();
+    std::string getStrategyString();
+    Strategy getStrategy();
+    int getStrategyCount();
+    void setStrategy(Strategy strategy);
 };
 
 #endif

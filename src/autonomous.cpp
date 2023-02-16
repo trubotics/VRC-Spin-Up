@@ -18,16 +18,21 @@ Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor &roller
     this->roller = &roller;
 }
 
-char *Autonomous::getStrategy()
+Strategy Autonomous::getStrategy()
 {
-    // map strategy to string
-    std::map<Strategy, char *> strategyMap = {
-        {Strategy::None, "None"},
-        {Strategy::LoaderRoller, "Loader Roller"},
-        {Strategy::SideRoller, "Side Roller"},
-    };
-
-    return strategyMap[Autonomous::STRATEGY];
+    return strategy;
+}
+std::string Autonomous::getStrategyString()
+{
+    return strategyMap[strategy];
+}
+int Autonomous::getStrategyCount()
+{
+    return strategyMap.size();
+}
+void Autonomous::setStrategy(Strategy strategy)
+{
+    Autonomous::strategy = strategy;
 }
 
 // Rolls the roller
@@ -64,7 +69,7 @@ void Autonomous::fireDisk(int count, double velocity)
 
 void Autonomous::run()
 {
-    switch (Autonomous::STRATEGY)
+    switch (Autonomous::strategy)
     {
     case Strategy::None:
         break;

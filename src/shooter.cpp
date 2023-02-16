@@ -90,8 +90,7 @@ void Shooter::updateVelocity()
 }
 void Shooter::setTargetVelocity(double targetVelocity)
 {
-  // maybe remove clamp?
-  this->targetVelocity = fmin(fmax(targetVelocity, 70), 100); // clamp target velocity between 70% and 100%
+    this->targetVelocity = fmin(fmax(targetVelocity, 0), 100); // clamp target velocity between 70% and 100%
   // this->flywheel->setVelocity(this->targetVelocity, vex::velocityUnits::pct);
 
   sumError = lastError = lastTime = 0;
@@ -126,7 +125,7 @@ bool Shooter::fireDisk(bool skipPreCheck)
 
   lastFiringTime = (*Brain).timer(timeUnits::msec); // update last firing time
 
-  // fire disk (extend piston and retract after 50 ms)
+  // fire disk (extend piston and retract after 75 ms)
   (*piston).set(true);
   wait(75, msec); // wait for piston to extend fully
   (*piston).set(false);

@@ -48,22 +48,62 @@ Autonomous autonomous = Autonomous(drive, shooter, roller);
 
 /* Global Functions */
 
-void pre_auton(void)
+void displayStrategy()
 {
+  Brain.Screen.clearScreen();
+  Brain.Screen.setCursor(1, 1);
+  Brain.Screen.print(autonomous.getStrategyString().c_str());
+}
+
+void pre_auton(void) {
   // flywheel
   // velocity managed by shooter
   flywheel.setStopping(vex::brakeType::coast);
-
   // intake
   intake.setVelocity(100, vex::velocityUnits::pct);
-
   // roller
   roller.setVelocity(25, vex::velocityUnits::pct);
 
-  // display autonomous mode
-  Brain.Screen.clearScreen();
-  Brain.Screen.setCursor(1, 1);
-  Brain.Screen.print(autonomous.getStrategy());
+  displayStrategy();
+  // allow strategy changes during pre-auton
+  primaryController.ButtonLeft.pressed( // previous strategy [Left]
+    []() {
+      int newStrategy = (int)autonomous.getStrategy() - 1;
+      if (newStrategy < 0)
+        newStrategy = autonomous.getStrategyCount() - 1;
+      autonomous.setStrategy((Strategy)newStrategy);
+      displayStrategy();
+    });
+  primaryController.ButtonRight.pressed( // next strategy [Right]
+    []() {
+      int newStrategy = (int)autonomous.getStrategy() + 1;
+      if (newStrategy >= autonomous.getStrategyCount())
+        newStrategy = 0;
+      autonomous.setStrategy((Strategy)newStrategy);
+      displayStrategy();
+    });
+  primaryController.ButtonUp.pressed( // default strategy [Up]
+    []() {
+      autonomous.setStrategy(Autonomous::DEFAULT_STRATEGY);
+      displayStrategy();
+    });
+  primaryController.ButtonDown.pressed( // no strategy [Down]
+    []() {
+      autonomous.setStrategy(Strategy::None);
+      displayStrategy();
+    });
+
+  // Preset strategy buttons
+  primaryController.ButtonX.pressed( // Loader Roller [X]
+    []() {
+      autonomous.setStrategy(Strategy::LoaderRoller);
+      displayStrategy();
+    });
+  primaryController.ButtonY.pressed( // Side Roller[Y]
+    []() {
+      autonomous.setStrategy(Strategy::SideRoller);
+      displayStrategy();
+    });
 }
 
 void userControl(void)
@@ -73,12 +113,12 @@ void userControl(void)
   drive.setMotorLock(false); // unlock the drivetrain
 
   // callback controls
-    primaryController.ButtonX.pressed( // toggle drivetrain lock (sets brake mode to hold) [X]
+  primaryController.ButtonX.pressed( // toggle drivetrain lock (sets brake mode to hold) [X]
       []()
       {
         drive.setMotorLock(!drive.getMotorLock());
       });
-    
+
   secondaryController.ButtonUp.pressed( // increase flywheel speed (10% increments) [Up]
       []()
       {
@@ -176,16 +216,22 @@ void userControl(void)
 //
 int main()
 {
-  // Set up callbacks for autonomous and driver control periods.
-  Competition.autonomous([]() { 
-    Brain.Screen.clearScreen();
-    Brain.Screen.print(autonomous.getStrategy());
-    autonomous.run(); 
-  });
-  Competition.drivercontrol(userControl);
-
   // Run the pre-autonomous function.
   pre_auton();
+  
+  //Set up competition functions
+  Competition.autonomous([]()
+                         {
+          // override controls during autonomous
+          primaryController.ButtonLeft.pressed([](){});
+          primaryController.ButtonRight.pressed([](){});
+          primaryController.ButtonUp.pressed([](){});
+          primaryController.ButtonDown.pressed([](){});
+          primaryController.ButtonX.pressed([](){});
+          primaryController.ButtonY.pressed([](){});
+          autonomous.run(); });
+
+  Competition.drivercontrol(userControl);
 
   int tuningIndex = 0; // The current value being tuned
   // 0 = P
