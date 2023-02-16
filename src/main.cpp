@@ -187,10 +187,60 @@ int main()
   // Run the pre-autonomous function.
   pre_auton();
 
+  int tuningIndex = 0; // The current value being tuned
+  // 0 = P
+  // 1 = I
+  // 2 = D
+  bool debounce = false;
+
   // Prevent main from exiting with an infinite loop.
   while (true)
   {
     wait(100, msec);
+
+    // Temporary tuning mode
+    if (primaryController.ButtonY.pressing() && primaryController.ButtonR2.pressing())
+    {
+      double increment = 0.01;
+      if (primaryController.ButtonR1.pressing())
+      {
+        increment = 0.1;
+      }
+
+      // change the tuning index
+      if (primaryController.ButtonLeft.pressing())
+      {
+        tuningIndex--;
+        if (tuningIndex < 0)
+        {
+          tuningIndex = 2;
+        }
+        debounce = true;
+      }
+      else if (primaryController.ButtonRight.pressing())
+      {
+        tuningIndex++;
+        if (tuningIndex > 2)
+        {
+          tuningIndex = 0;
+        }
+        debounce = true;
+      }
+      // change the value
+      else if (primaryController.ButtonUp.pressing())
+      {
+        shooter.changePID(tuningIndex, increment);
+        debounce = true;
+      }
+      else if (primaryController.ButtonDown.pressing())
+      {
+        shooter.changePID(tuningIndex, -increment);
+        debounce = true;
+      }
+      else {
+        debounce = false;
+      }
+    }
 
     // call update functions
     shooter.updateVelocity();

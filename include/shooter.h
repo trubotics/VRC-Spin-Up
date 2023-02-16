@@ -13,8 +13,16 @@ private:
     double targetVelocity = 80;   // The velocity the flywheel should be at to fire
     double lastFiringTime = -200; // The time when the last disk was fired
     bool isSpinning = false;      // Whether the flywheel is spinning or not
+
+    // PID "constants" <-- we need to tune these
+    double kP = 0.5; // needs tuning
+    double kD = 0; // unsure if needed
+    double kI = 0; // unsure if needed
 public:
     Shooter(brain Brain, motor_group flywheel, vex::triport::port port);
+
+    // temp
+    void changePID(int index, double deltaPID);
 
     void setTargetVelocity(double targetVelocity);
     void updateVelocity();
