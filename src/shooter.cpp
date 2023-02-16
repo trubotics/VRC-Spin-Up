@@ -31,6 +31,9 @@ const double kD = 0; // unsure if needed
 double sumError = 0, lastError = 0, lastTime = 0;
 void Shooter::updateVelocity()
 {
+    // don't need to calculate when not spinning
+    if (!isSpinning) return;
+
     double error = this->targetVelocity - this->flywheel->velocity(vex::velocityUnits::pct);
     
     // for proportional
@@ -56,7 +59,7 @@ void Shooter::updateVelocity()
 
     // modify velocity
     double output = proportional + integral + derivative;
-    flywheel->spin(vex::directionType::fwd, targetVelocity + output, vex::velocityUnits::pct); // maybe just use this
+    flywheel->setVelocity(targetVelocity + output, vex::velocityUnits::pct); // set new flywheel velocity target
 
     // no idea if these print statements correct
     Brain->Screen.print("Modified Target Velocity: %f", targetVelocity + output);
@@ -66,13 +69,26 @@ void Shooter::setTargetVelocity(double targetVelocity)
 {
     // maybe remove clamp?
     this->targetVelocity = fmin(fmax(targetVelocity, 70), 100); // clamp target velocity between 70% and 100%
-    this->flywheel->setVelocity(this->targetVelocity, vex::velocityUnits::pct);
+    //this->flywheel->setVelocity(this->targetVelocity, vex::velocityUnits::pct);
 
     sumError = lastError = lastTime = 0;
 
     Brain->Screen.clearScreen();
     Brain->Screen.setCursor(1, 1);
     Brain->Screen.print("Target Velocity: %f", this->targetVelocity);
+}
+
+void Shooter::spinUp() // get it?
+{
+    flywheel->setVelocity(0, vex::velocityUnits::pct); // wait for PID function to set velocity
+    sumError = lastError = lastTime = 0;
+    isSpinning = true;
+    flywheel->spin(vex::directionType::fwd);
+}
+void Shooter::stop()
+{
+    flywheel->stop();
+    isSpinning = false;
 }
 
 bool Shooter::fireDisk(bool skipPreCheck)

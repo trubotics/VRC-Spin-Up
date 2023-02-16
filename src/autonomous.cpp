@@ -11,11 +11,10 @@
 
 using namespace vex;
 
-Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &flywheel, motor &roller)
+Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor &roller)
 {
     this->drive = &drive;
     this->shooter = &shooter;
-    this->flywheel = &flywheel;
     this->roller = &roller;
 }
 
@@ -49,7 +48,7 @@ void Autonomous::fireDisk(int count, double velocity)
 {
     // spin up flywheel to speed
     shooter->setTargetVelocity(velocity);
-    flywheel->spin(vex::directionType::fwd);
+    shooter->spinUp();
 
     // fire disks when possible
     for (int i = 0; i < count; i++)
@@ -60,7 +59,7 @@ void Autonomous::fireDisk(int count, double velocity)
     }
 
     // stop flywheel
-    flywheel->stop();
+    shooter->stop();
 }
 
 void Autonomous::run()

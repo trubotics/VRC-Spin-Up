@@ -44,7 +44,7 @@ motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 Shooter shooter = Shooter(Brain, flywheel, Brain.ThreeWirePort.A);
 
 // initialize autonomous class
-Autonomous autonomous = Autonomous(drive, shooter, flywheel, roller);
+Autonomous autonomous = Autonomous(drive, shooter, roller);
 
 /* Global Functions */
 
@@ -157,13 +157,13 @@ void userControl(void)
     // spin flywheel (hold the button to start spinning, release to stop) [R2]
     if (secondaryController.ButtonR2.pressing())
     {
-      flywheel.spin(vex::forward);
+      shooter.spinUp();
       // update the flywheel velocity with PID
       shooter.updateVelocity();
     }
     else
     {
-      flywheel.stop();
+      shooter.stop();
     }
 
     wait(20, msec); // Sleep the task for a short amount of time to
@@ -191,5 +191,8 @@ int main()
   while (true)
   {
     wait(100, msec);
+
+    // call update functions
+    shooter.updateVelocity();
   }
 }

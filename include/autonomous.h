@@ -33,13 +33,12 @@ private:
 
     MecanumDriveTrain *drive = nullptr;
     Shooter *shooter = nullptr;
-    motor_group *flywheel = nullptr;
     motor *roller = nullptr;
 
     void rollRoller();
     void fireDisk(int count = 2, double velocity = 100);
 public:
-    Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &flywheel, motor &roller);
+    Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor &roller);
 
     void run();
 

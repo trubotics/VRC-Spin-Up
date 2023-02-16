@@ -12,13 +12,15 @@ private:
     pneumatics *piston = nullptr;
     double targetVelocity = 80;   // The velocity the flywheel should be at to fire
     double lastFiringTime = -200; // The time when the last disk was fired
-
+    bool isSpinning = false;      // Whether the flywheel is spinning or not
 public:
     Shooter(brain Brain, motor_group flywheel, vex::triport::port port);
 
     void setTargetVelocity(double targetVelocity);
     void updateVelocity();
     // void changeTargetVelocity(double deltaVelocity); // set target velocity to current velocity + deltaVelocity
+    void spinUp();
+    void stop();
     bool fireDisk(bool skipPreCheck = false);
 };
 
