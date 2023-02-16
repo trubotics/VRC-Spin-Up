@@ -17,7 +17,8 @@ public:
     Shooter(brain Brain, motor_group flywheel, vex::triport::port port);
 
     void setTargetVelocity(double targetVelocity);
-    void changeTargetVelocity(double deltaVelocity); // set target velocity to current velocity + deltaVelocity
+    void updateVelocity();
+    // void changeTargetVelocity(double deltaVelocity); // set target velocity to current velocity + deltaVelocity
     bool fireDisk(bool skipPreCheck = false);
 };
 

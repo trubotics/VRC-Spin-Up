@@ -22,18 +22,57 @@ Shooter::Shooter(brain Brain, motor_group flywheel, vex::triport::port port)
     this->piston = &p;
 }
 
+//////////////////////////////////////////////////////
+/// @brief basic PID control for flywheel velocity ///
+//////////////////////////////////////////////////////
+const double kP = 0.5; // needs tuning
+const double kI = 0; // unsure if needed
+const double kD = 0; // unsure if needed
+double sumError = 0, lastError = 0, lastTime = 0;
+void Shooter::updateVelocity()
+{
+    double error = this->targetVelocity - this->flywheel->velocity(vex::velocityUnits::pct);
+    
+    // for proportional
+    double proportional = error * kP;
+
+    // for derivative
+    double derivative = 0;
+    if (lastTime==0) {
+      lastTime = Brain->timer(timeUnits::msec);
+      lastError = error;
+    } else {
+      double currentTime = Brain->timer(timeUnits::msec);
+      double deltaTime = currentTime - lastTime;
+      derivative = (error - lastError) / (currentTime - lastTime) * kD;
+    }
+
+    // for integral
+    sumError += error;
+    double integral = sumError * kI;
+
+    lastError = error;
+    lastTime = currentTime;
+
+    // modify velocity
+    double output = proportional + integral + derivative;
+    flywheel->spin(vex::directionType::fwd, targetVelocity + output, vex::velocityUnits::pct); // maybe just use this
+
+    // no idea if these print statements correct
+    Brain->Screen.print("Modified Target Velocity: %f", targetVelocity + output);
+    Brain->Screen.print("Measured Velocity: %f", this->flywheel->velocity(vex::velocityUnits::pct));
+}
 void Shooter::setTargetVelocity(double targetVelocity)
 {
+    // maybe remove clamp?
     this->targetVelocity = fmin(fmax(targetVelocity, 70), 100); // clamp target velocity between 70% and 100%
     this->flywheel->setVelocity(this->targetVelocity, vex::velocityUnits::pct);
+
+    sumError = lastError = lastTime = 0;
 
     Brain->Screen.clearScreen();
     Brain->Screen.setCursor(1, 1);
     Brain->Screen.print("Target Velocity: %f", this->targetVelocity);
-}
-void Shooter::changeTargetVelocity(double deltaVelocity)
-{
-    setTargetVelocity(targetVelocity + deltaVelocity);
 }
 
 bool Shooter::fireDisk(bool skipPreCheck)

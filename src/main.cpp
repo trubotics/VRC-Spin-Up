@@ -158,6 +158,8 @@ void userControl(void)
     if (secondaryController.ButtonR2.pressing())
     {
       flywheel.spin(vex::forward);
+      // update the flywheel velocity with PID
+      shooter.updateVelocity();
     }
     else
     {
