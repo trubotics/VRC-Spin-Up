@@ -96,7 +96,7 @@ void Autonomous::sensorRotate(double deltaAngle, double speed)
     {
         while (inertialSensor->rotation(vex::rotationUnits::deg) - initialRotation > deltaAngle)
         {
-            drive->drive(0, 0, speed);
+            drive->drive(0, 0, -speed);
         }
     }
 
