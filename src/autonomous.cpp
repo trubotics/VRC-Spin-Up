@@ -11,11 +11,16 @@
 
 using namespace vex;
 
-Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor &roller)
+Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, RollerRoller &roller,
+                       distance &leftDistance, distance &rightDistance, inertial &inertialSensor)
 {
     this->drive = &drive;
     this->shooter = &shooter;
     this->roller = &roller;
+
+    this->leftDistance = &leftDistance;
+    this->rightDistance = &rightDistance;
+    this->inertialSensor = &inertialSensor;
 }
 
 Strategy Autonomous::getStrategy()
@@ -35,6 +40,68 @@ void Autonomous::setStrategy(Strategy strategy)
     Autonomous::strategy = strategy;
 }
 
+// Strafe using the distance sensors (***IN INCHES***) because all the game element measurements are in inches
+// Use negative distance to strafe left
+// By default, this strafes towards the target object, use a negative speed to strafe away
+void Autonomous::sensorStrafe(double targetDistance, double speed)
+{
+    // select sensor
+    vex::distance *selectedSensor;
+    if (targetDistance > 0)
+    {
+        selectedSensor = rightDistance;
+    }
+    else
+    {
+        selectedSensor = leftDistance;
+        targetDistance = -targetDistance;
+        speed = -speed;
+    }
+
+    // strafe
+    if (speed > 0)
+    {
+        while (selectedSensor->objectDistance(vex::distanceUnits::in) > targetDistance)
+        {
+            drive->drive(0, speed, 0);
+        }
+    }
+    else
+    {
+        while (selectedSensor->objectDistance(vex::distanceUnits::in) < targetDistance)
+        {
+            drive->drive(0, speed, 0);
+        }
+    }
+
+    drive->drive(0, 0, 0);
+}
+
+// Rotate using the inertial sensor
+// Use negative degrees to rotate left
+void Autonomous::sensorRotate(double deltaAngle, double speed)
+{
+    double initialRotation = inertialSensor->rotation(vex::rotationUnits::deg);
+
+    // rotate
+    if (deltaAngle > 0)
+    {
+        while (inertialSensor->rotation(vex::rotationUnits::deg) - initialRotation < deltaAngle)
+        {
+            drive->drive(0, 0, speed);
+        }
+    }
+    else
+    {
+        while (inertialSensor->rotation(vex::rotationUnits::deg) - initialRotation > deltaAngle)
+        {
+            drive->drive(0, 0, -speed);
+        }
+    }
+
+    drive->drive(0, 0, 0);
+}
+
 // Rolls the roller
 void Autonomous::rollRoller()
 {
@@ -42,9 +109,12 @@ void Autonomous::rollRoller()
     drive->drive(-30, 0, 0);
     waitUntil(drive->getAvgTorque() > 0.5);
 
+    // calibrate team color
+    roller->calibrateTeamColor();
+
     // continue driving into the roller very gently and roll the roller
     drive->drive(-10, 0, 0);
-    roller->spinFor(0.5, vex::rotationUnits::rev, 25, vex::velocityUnits::pct);
+    roller->rollRoller();
     drive->drive(0, 0, 0);
 }
 
@@ -75,7 +145,7 @@ void Autonomous::run()
         break;
     case Strategy::LoaderRoller:
         // move a little left to get into position
-        drive->driveFor(0, -100, 0, 0.5);
+        sensorStrafe(-32);
         rollRoller();
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
@@ -83,7 +153,7 @@ void Autonomous::run()
         break;
     case Strategy::SideRoller:
         // move one tile right to roller
-        drive->driveFor(0, 100, 0, 2.5);
+        sensorStrafe(32);
         rollRoller();
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
