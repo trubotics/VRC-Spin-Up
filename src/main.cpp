@@ -292,7 +292,7 @@ int main()
           debounce = true;
         }
     }
-    else if (!(primaryController.ButtonUp.pressing() || primaryController.ButtonDown.pressing() || primaryController.ButtonLeft.pressing() || primaryController.ButtonRight.pressing()))
+    if (!(primaryController.ButtonUp.pressing() || primaryController.ButtonDown.pressing() || primaryController.ButtonLeft.pressing() || primaryController.ButtonRight.pressing()))
     {
       debounce = false;
     }
