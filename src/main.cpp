@@ -55,7 +55,8 @@ void displayStrategy()
   Brain.Screen.print(autonomous.getStrategyString().c_str());
 }
 
-void pre_auton(void) {
+void pre_auton(void)
+{
   // flywheel
   // velocity managed by shooter
   flywheel.setStopping(vex::brakeType::coast);
@@ -67,43 +68,49 @@ void pre_auton(void) {
   displayStrategy();
   // allow strategy changes during pre-auton
   primaryController.ButtonLeft.pressed( // previous strategy [Left]
-    []() {
-      int newStrategy = (int)autonomous.getStrategy() - 1;
-      if (newStrategy < 0)
-        newStrategy = autonomous.getStrategyCount() - 1;
-      autonomous.setStrategy((Strategy)newStrategy);
-      displayStrategy();
-    });
+      []()
+      {
+        int newStrategy = (int)autonomous.getStrategy() - 1;
+        if (newStrategy < 0)
+          newStrategy = autonomous.getStrategyCount() - 1;
+        autonomous.setStrategy((Strategy)newStrategy);
+        displayStrategy();
+      });
   primaryController.ButtonRight.pressed( // next strategy [Right]
-    []() {
-      int newStrategy = (int)autonomous.getStrategy() + 1;
-      if (newStrategy >= autonomous.getStrategyCount())
-        newStrategy = 0;
-      autonomous.setStrategy((Strategy)newStrategy);
-      displayStrategy();
-    });
+      []()
+      {
+        int newStrategy = (int)autonomous.getStrategy() + 1;
+        if (newStrategy >= autonomous.getStrategyCount())
+          newStrategy = 0;
+        autonomous.setStrategy((Strategy)newStrategy);
+        displayStrategy();
+      });
   primaryController.ButtonUp.pressed( // default strategy [Up]
-    []() {
-      autonomous.setStrategy(Autonomous::DEFAULT_STRATEGY);
-      displayStrategy();
-    });
+      []()
+      {
+        autonomous.setStrategy(Autonomous::DEFAULT_STRATEGY);
+        displayStrategy();
+      });
   primaryController.ButtonDown.pressed( // no strategy [Down]
-    []() {
-      autonomous.setStrategy(Strategy::None);
-      displayStrategy();
-    });
+      []()
+      {
+        autonomous.setStrategy(Strategy::None);
+        displayStrategy();
+      });
 
   // Preset strategy buttons
   primaryController.ButtonX.pressed( // Loader Roller [X]
-    []() {
-      autonomous.setStrategy(Strategy::LoaderRoller);
-      displayStrategy();
-    });
+      []()
+      {
+        autonomous.setStrategy(Strategy::LoaderRoller);
+        displayStrategy();
+      });
   primaryController.ButtonY.pressed( // Side Roller[Y]
-    []() {
-      autonomous.setStrategy(Strategy::SideRoller);
-      displayStrategy();
-    });
+      []()
+      {
+        autonomous.setStrategy(Strategy::SideRoller);
+        displayStrategy();
+      });
 }
 
 void userControl(void)
@@ -218,8 +225,8 @@ int main()
 {
   // Run the pre-autonomous function.
   pre_auton();
-  
-  //Set up competition functions
+
+  // Set up competition functions
   Competition.autonomous([]()
                          {
           // override controls during autonomous
@@ -253,42 +260,44 @@ int main()
         increment = 0.1;
       }
 
-      // change the tuning index
-      if (primaryController.ButtonLeft.pressing())
-      {
-        tuningIndex--;
-        if (tuningIndex < 0)
+      if (!debounce)
+        // change the tuning index
+        if (primaryController.ButtonLeft.pressing())
         {
-          tuningIndex = 2;
+          tuningIndex--;
+          if (tuningIndex < 0)
+          {
+            tuningIndex = 2;
+          }
+          debounce = true;
         }
-        debounce = true;
-      }
-      else if (primaryController.ButtonRight.pressing())
-      {
-        tuningIndex++;
-        if (tuningIndex > 2)
+        else if (primaryController.ButtonRight.pressing())
         {
-          tuningIndex = 0;
+          tuningIndex++;
+          if (tuningIndex > 2)
+          {
+            tuningIndex = 0;
+          }
+          debounce = true;
         }
-        debounce = true;
-      }
-      // change the value
-      else if (primaryController.ButtonUp.pressing())
-      {
-        shooter.changePID(tuningIndex, increment);
-        debounce = true;
-      }
-      else if (primaryController.ButtonDown.pressing())
-      {
-        shooter.changePID(tuningIndex, -increment);
-        debounce = true;
-      }
-      else {
-        debounce = false;
-      }
+        // change the value
+        else if (primaryController.ButtonUp.pressing())
+        {
+          shooter.changePID(tuningIndex, increment);
+          debounce = true;
+        }
+        else if (primaryController.ButtonDown.pressing())
+        {
+          shooter.changePID(tuningIndex, -increment);
+          debounce = true;
+        }
     }
-
-    // call update functions
-    shooter.updateVelocity();
+    else if (!(primaryController.ButtonUp.pressing() || primaryController.ButtonDown.pressing() || primaryController.ButtonLeft.pressing() || primaryController.ButtonRight.pressing()))
+    {
+      debounce = false;
+    }
   }
+
+  // call update functions
+  shooter.updateVelocity();
 }
