@@ -31,10 +31,10 @@ void Shooter::changePID(int index, double deltaPID)
     kP += deltaPID;
     break;
   case 1:
-    kD += deltaPID;
+    kI += deltaPID;
     break;
   case 2:
-    kI += deltaPID;
+    kD += deltaPID;
     break;
   }
 
