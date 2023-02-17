@@ -200,48 +200,6 @@ int tuningIndex = 0; // The current value being tuned
 // 1 = I
 // 2 = D
 
-// The following functions are called when the robot is disabled
-void strategyChanger() // Allows switching of strategies
-{
-  // allow strategy changes during pre-auton
-
-  if (!debounce)
-  {
-    if (primaryController.ButtonLeft.pressing()) // previous strategy [Left]
-    {
-      int newStrategy = (int)autonomous.getStrategy() - 1;
-      if (newStrategy < 0)
-        newStrategy = autonomous.getStrategyCount() - 1;
-      autonomous.setStrategy((Strategy)newStrategy);
-      displayStrategy();
-      debounce = true;
-    }
-    else if (primaryController.ButtonRight.pressing()) // next strategy [Right]
-    {
-      int newStrategy = (int)autonomous.getStrategy() + 1;
-      if (newStrategy >= autonomous.getStrategyCount())
-        newStrategy = 0;
-      autonomous.setStrategy((Strategy)newStrategy);
-      displayStrategy();
-      debounce = true;
-    }
-  }
-
-  // Preset-like strategy buttons
-  if (primaryController.ButtonUp.pressing()) // default strategy [Up]
-    autonomous.setStrategy(Autonomous::DEFAULT_STRATEGY);
-  if (primaryController.ButtonDown.pressing()) // no strategy [Down]
-    autonomous.setStrategy(Strategy::None);
-
-  // True-preset strategy buttons
-  if (primaryController.ButtonX.pressing()) // Loader Roller [X]
-    autonomous.setStrategy(Strategy::LoaderRoller);
-  if (primaryController.ButtonY.pressing()) // Side Roller[Y]
-    autonomous.setStrategy(Strategy::SideRoller);
-
-  displayStrategy();
-}
-
 void tuningAdjuster()
 {
   // Temporary tuning mode
@@ -306,16 +264,7 @@ int main()
   pre_auton();
 
   // Set up competition functions
-  Competition.autonomous([]()
-                         {
-          // override controls during autonomous
-          primaryController.ButtonLeft.pressed([](){});
-          primaryController.ButtonRight.pressed([](){});
-          primaryController.ButtonUp.pressed([](){});
-          primaryController.ButtonDown.pressed([](){});
-          primaryController.ButtonX.pressed([](){});
-          primaryController.ButtonY.pressed([](){});
-          autonomous.run(); });
+  Competition.autonomous([](){ autonomous.run(); });
 
   Competition.drivercontrol(userControl);
 
@@ -324,12 +273,8 @@ int main()
   {
     wait(100, msec);
 
-    if (!Competition.isEnabled())
-    {
-      tuningAdjuster();
-      strategyChanger();
-      debounceResetter();
-    }
+    tuningAdjuster();
+    debounceResetter();
 
     // call update functions
     shooter.updateVelocity();
