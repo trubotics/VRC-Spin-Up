@@ -62,7 +62,7 @@ void Shooter::updateVelocity()
   // for proportional
   double proportional = error * kP;
 
-  // for derivative
+  // for derivative & integral
   double derivative = 0;
   double currentTime = Brain->timer(timeUnits::msec);
   if (lastTime == 0)
@@ -74,10 +74,10 @@ void Shooter::updateVelocity()
   {
     double deltaTime = currentTime - lastTime;
     derivative = (error - lastError) / (currentTime - lastTime) * kD;
+
+    sumError += error * (currentTime - lastTime);
   }
 
-  // for integral
-  sumError += error;
   double integral = sumError * kI;
 
   lastError = error;
@@ -133,12 +133,12 @@ bool Shooter::fireDisk(bool skipPreCheck)
 
   Brain->Screen.clearScreen();
   Brain->Screen.setCursor(1, 1);
-  Brain->Screen.print(lastFiringTime);
+  Brain->Screen.print(piston);
 
   lastFiringTime = (*Brain).timer(timeUnits::msec); // update last firing time
   
   Brain->Screen.setCursor(2,1);
-  Brain->Screen.print(lastFiringTime);
+  Brain->Screen.print(piston);
 
   // fire disk (extend piston and retract after 75 ms)
   piston->set(true);
@@ -150,7 +150,7 @@ bool Shooter::fireDisk(bool skipPreCheck)
 
   Brain->Screen.setCursor(4,1);
   Brain->Screen.print("Retracting");
-  
+
   piston->set(false);
 
   return true; // success
