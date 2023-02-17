@@ -11,6 +11,7 @@
 #include <autonomous.h>
 #include <mecanumDrivetrain.h>
 #include <shooter.h>
+#include <rollerRoller.h>
 
 using namespace vex;
 
@@ -26,6 +27,12 @@ brain Brain = brain();
 controller primaryController = controller(primary);
 controller secondaryController = controller(partner);
 
+// sensors
+distance leftDist = distance(PORT1);
+distance rightDist = distance(PORT2);
+inertial inertialSensor = inertial(PORT3);
+optical opticalSensor = optical(PORT4);
+
 // drive train
 MecanumDriveTrain drive = MecanumDriveTrain(PORT15, true, PORT16, true, PORT5, false, PORT6, false);
 
@@ -33,7 +40,7 @@ MecanumDriveTrain drive = MecanumDriveTrain(PORT15, true, PORT16, true, PORT5, f
 motor intake = motor(PORT8, ratio6_1, true);
 
 // roller
-motor roller = motor(PORT10, ratio6_1, false);
+RollerRoller roller = RollerRoller(PORT10, opticalSensor);
 
 // flywheel
 motor flywheelFront = motor(PORT11, ratio36_1, false);
@@ -42,11 +49,6 @@ motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
 // firing piston
 Shooter shooter = Shooter(Brain, flywheel, Brain.ThreeWirePort.A);
-
-// sensors
-distance leftDist = distance(PORT1);
-distance rightDist = distance(PORT2);
-inertial inertialSensor = inertial(PORT3);
 
 // initialize autonomous class
 Autonomous autonomous = Autonomous(drive, shooter, flywheel, roller,
@@ -68,8 +70,6 @@ void pre_auton(void)
   flywheel.setStopping(vex::brakeType::coast);
   // intake
   intake.setVelocity(100, vex::velocityUnits::pct);
-  // roller
-  roller.setVelocity(25, vex::velocityUnits::pct);
 
   displayStrategy();
   // allow strategy changes during pre-auton
@@ -131,6 +131,11 @@ void userControl(void)
       {
         drive.setMotorLock(!drive.getMotorLock());
       });
+  primaryController.ButtonA.pressed( // start smart roller [A]
+      []()
+      {
+        roller.rollRoller();
+      });
 
   secondaryController.ButtonUp.pressed( // increase flywheel speed (10% increments) [Up]
       []()
@@ -156,6 +161,16 @@ void userControl(void)
       []()
       {
         shooter.fireDisk();
+      });
+  secondaryController.ButtonL1.pressed( // start smart roller [L1]
+      []()
+      {
+        roller.rollRoller();
+      });
+  secondaryController.ButtonL2.pressed( // stop roller [L2]
+      []()
+      {
+        roller.stopRoller();
       });
 
   while (1)
@@ -193,14 +208,14 @@ void userControl(void)
       intake.stop();
     }
 
-    // roller spinner (top -> up, bot -> down) [L1/L2]
-    if (primaryController.ButtonL1.pressing() || secondaryController.ButtonL1.pressing())
+    // backup manual roller spinner (top -> up, bot -> down) for primary [L1/L2]
+    if (primaryController.ButtonL1.pressing())
     {
-      roller.spin(vex::forward);
+      roller.rollRoller(vex::forward);
     }
-    else if (primaryController.ButtonL2.pressing() || secondaryController.ButtonL2.pressing())
+    else if (primaryController.ButtonL2.pressing())
     {
-      roller.spin(vex::reverse);
+      roller.rollRoller(vex::reverse);
     }
     else
     {

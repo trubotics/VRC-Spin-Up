@@ -11,7 +11,7 @@
 
 using namespace vex;
 
-Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &flywheel, motor &roller,
+Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &flywheel, RollerRoller &roller,
                        distance &leftDistance, distance &rightDistance, inertial &inertialSensor)
 {
     this->drive = &drive;
@@ -110,9 +110,12 @@ void Autonomous::rollRoller()
     drive->drive(-30, 0, 0);
     waitUntil(drive->getAvgTorque() > 0.5);
 
+    // calibrate team color
+    roller->calibrateTeamColor();
+
     // continue driving into the roller very gently and roll the roller
     drive->drive(-10, 0, 0);
-    roller->spinFor(0.5, vex::rotationUnits::rev, 25, vex::velocityUnits::pct);
+    roller->rollRoller();
     drive->drive(0, 0, 0);
 }
 

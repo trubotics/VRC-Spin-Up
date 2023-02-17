@@ -6,6 +6,7 @@
 #include <vex.h>
 #include <mecanumDrivetrain.h>
 #include <shooter.h>
+#include <rollerRoller.h>
 using namespace vex;
 
 enum class Strategy
@@ -41,7 +42,7 @@ private:
     MecanumDriveTrain *drive = nullptr;
     Shooter *shooter = nullptr;
     motor_group *flywheel = nullptr;
-    motor *roller = nullptr;
+    RollerRoller *roller = nullptr;
 
     distance *leftDistance = nullptr;
     distance *rightDistance = nullptr;
@@ -55,7 +56,7 @@ private:
 public:
     static const Strategy DEFAULT_STRATEGY = Strategy::LoaderRoller;
 
-    Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &flywheel, motor &roller,
+    Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &flywheel, RollerRoller &roller,
                distance &leftDistance, distance &rightDistance, inertial &inertialSensor);
 
     void run();
