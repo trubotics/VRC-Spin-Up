@@ -86,7 +86,7 @@ void Shooter::updateVelocity()
   Brain->Screen.setCursor(2, 1);
   Brain->Screen.print("Measured Velocity: %f", this->flywheel->velocity(vex::velocityUnits::pct));
   Brain->Screen.setCursor(4, 1);
-  Brain->Screen.print("PID: %f %f %f", proportional, integral, derivative);
+  Brain->Screen.print("PID: %f %f %f", kP, kI, kD);
 }
 void Shooter::setTargetVelocity(double targetVelocity)
 {
