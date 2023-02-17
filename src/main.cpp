@@ -43,8 +43,13 @@ motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 // firing piston
 Shooter shooter = Shooter(Brain, flywheel, Brain.ThreeWirePort.A);
 
+// sensors
+distance leftDist = distance(PORT1);
+distance rightDist = distance(PORT2);
+inertial inertialSensor = inertial(PORT3);
+
 // initialize autonomous class
-Autonomous autonomous = Autonomous(drive, shooter, flywheel, roller);
+Autonomous autonomous = Autonomous(drive, shooter, flywheel, roller, leftDist, rightDist);
 
 /* Global Functions */
 

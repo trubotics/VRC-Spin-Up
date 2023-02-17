@@ -11,12 +11,16 @@
 
 using namespace vex;
 
-Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &flywheel, motor &roller)
+Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &flywheel, motor &roller,
+                       distance &leftDistance, distance &rightDistance)
 {
     this->drive = &drive;
     this->shooter = &shooter;
     this->flywheel = &flywheel;
     this->roller = &roller;
+
+    this->leftDistance = &leftDistance;
+    this->rightDistance = &rightDistance;
 }
 
 Strategy Autonomous::getStrategy()
@@ -34,6 +38,41 @@ int Autonomous::getStrategyCount()
 void Autonomous::setStrategy(Strategy strategy)
 {
     Autonomous::strategy = strategy;
+}
+
+// Strafe using the distance sensors (***IN INCHES***) because all the game element measurements are in inches
+// Use negative distance to strafe left
+// By default, this strafes towards the target object, use a negative speed to strafe away
+void Autonomous::sensorStrafe(double targetDistance, double speed)
+{
+    // select sensor
+    vex::distance *selectedSensor;
+    if (targetDistance > 0)
+    {
+        selectedSensor = rightDistance;
+    }
+    else
+    {
+        selectedSensor = leftDistance;
+        targetDistance = -targetDistance;
+        speed = -speed;
+    }
+
+    // strafe
+    if (speed > 0)
+    {
+        while (selectedSensor->objectDistance(vex::distanceUnits::in) > targetDistance)
+        {
+            drive->drive(0, speed, 0);
+        }
+    }
+    else
+    {
+        while (selectedSensor->objectDistance(vex::distanceUnits::in) < targetDistance)
+        {
+            drive->drive(0, speed, 0);
+        }
+    }
 }
 
 // Rolls the roller
@@ -76,7 +115,7 @@ void Autonomous::run()
         break;
     case Strategy::LoaderRoller:
         // move a little left to get into position
-        drive->driveFor(0, -100, 0, 0.5);
+        sensorStrafe(-32, 50);
         rollRoller();
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
@@ -84,7 +123,7 @@ void Autonomous::run()
         break;
     case Strategy::SideRoller:
         // move one tile right to roller
-        drive->driveFor(0, 100, 0, 2.5);
+        sensorStrafe(32, 50);
         rollRoller();
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
