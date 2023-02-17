@@ -16,8 +16,8 @@ private:
 
     // PID "constants"
     double kP = 0.05;
-    double kD = 0.09;
-    double kI = 0.01;
+    double kI = 0.09;
+    double kD = 0.01;
 public:
     Shooter(brain Brain, motor_group flywheel, vex::triport::port port);
 
