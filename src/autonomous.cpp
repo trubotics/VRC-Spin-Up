@@ -12,7 +12,7 @@
 using namespace vex;
 
 Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &flywheel, motor &roller,
-                       distance &leftDistance, distance &rightDistance)
+                       distance &leftDistance, distance &rightDistance, inertial &inertialSensor)
 {
     this->drive = &drive;
     this->shooter = &shooter;
@@ -21,6 +21,7 @@ Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &
 
     this->leftDistance = &leftDistance;
     this->rightDistance = &rightDistance;
+    this->inertialSensor = &inertialSensor;
 }
 
 Strategy Autonomous::getStrategy()
@@ -73,6 +74,33 @@ void Autonomous::sensorStrafe(double targetDistance, double speed)
             drive->drive(0, speed, 0);
         }
     }
+
+    drive->drive(0, 0, 0);
+}
+
+// Rotate using the inertial sensor
+// Use negative degrees to rotate left
+void Autonomous::sensorRotate(double deltaAngle, double speed)
+{
+    double initialRotation = inertialSensor->rotation(vex::rotationUnits::deg);
+
+    // rotate
+    if (deltaAngle > 0)
+    {
+        while (inertialSensor->rotation(vex::rotationUnits::deg) - initialRotation < deltaAngle)
+        {
+            drive->drive(0, 0, speed);
+        }
+    }
+    else
+    {
+        while (inertialSensor->rotation(vex::rotationUnits::deg) - initialRotation > deltaAngle)
+        {
+            drive->drive(0, 0, speed);
+        }
+    }
+
+    drive->drive(0, 0, 0);
 }
 
 // Rolls the roller
@@ -115,7 +143,7 @@ void Autonomous::run()
         break;
     case Strategy::LoaderRoller:
         // move a little left to get into position
-        sensorStrafe(-32, 50);
+        sensorStrafe(-32);
         rollRoller();
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
@@ -123,7 +151,7 @@ void Autonomous::run()
         break;
     case Strategy::SideRoller:
         // move one tile right to roller
-        sensorStrafe(32, 50);
+        sensorStrafe(32);
         rollRoller();
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);

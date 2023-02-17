@@ -45,8 +45,10 @@ private:
 
     distance *leftDistance = nullptr;
     distance *rightDistance = nullptr;
+    inertial *inertialSensor = nullptr;
 
     void sensorStrafe(double targetDistance, double velocity = 50);
+    void sensorRotate(double deltaAngle, double velocity = 50);
     void rollRoller();
     void fireDisk(int count = 2, double velocity = 100);
 
@@ -54,7 +56,7 @@ public:
     static const Strategy DEFAULT_STRATEGY = Strategy::LoaderRoller;
 
     Autonomous(MecanumDriveTrain &drive, Shooter &shooter, motor_group &flywheel, motor &roller,
-               distance &leftDistance, distance &rightDistance);
+               distance &leftDistance, distance &rightDistance, inertial &inertialSensor);
 
     void run();
 
