@@ -201,42 +201,6 @@ int tuningIndex = 0; // The current value being tuned
 // 1 = I
 // 2 = D
 
-//
-// Main will set up the competition functions and callbacks.
-//
-int main()
-{
-  // Run the pre-autonomous function.
-  pre_auton();
-
-  // Set up competition functions
-  Competition.autonomous([]()
-                         {
-          // override controls during autonomous
-          primaryController.ButtonLeft.pressed([](){});
-          primaryController.ButtonRight.pressed([](){});
-          primaryController.ButtonUp.pressed([](){});
-          primaryController.ButtonDown.pressed([](){});
-          primaryController.ButtonX.pressed([](){});
-          primaryController.ButtonY.pressed([](){});
-          autonomous.run(); });
-
-  Competition.drivercontrol(userControl);
-
-  // Prevent main from exiting with an infinite loop.
-  while (true)
-  {
-    wait(100, msec);
-
-    tuningAdjuster();
-    strategyChanger();
-    debounceResetter();
-
-    // call update functions
-    shooter.updateVelocity();
-  }
-}
-
 // The following functions are called when the robot is disabled
 void strategyChanger() // Allows switching of strategies
 {
@@ -334,5 +298,41 @@ void debounceResetter()
   || primaryController.ButtonRight.pressing()))
   {
     debounce = false;
+  }
+}
+
+//
+// Main will set up the competition functions and callbacks.
+//
+int main()
+{
+  // Run the pre-autonomous function.
+  pre_auton();
+
+  // Set up competition functions
+  Competition.autonomous([]()
+                         {
+          // override controls during autonomous
+          primaryController.ButtonLeft.pressed([](){});
+          primaryController.ButtonRight.pressed([](){});
+          primaryController.ButtonUp.pressed([](){});
+          primaryController.ButtonDown.pressed([](){});
+          primaryController.ButtonX.pressed([](){});
+          primaryController.ButtonY.pressed([](){});
+          autonomous.run(); });
+
+  Competition.drivercontrol(userControl);
+
+  // Prevent main from exiting with an infinite loop.
+  while (true)
+  {
+    wait(100, msec);
+
+    tuningAdjuster();
+    strategyChanger();
+    debounceResetter();
+
+    // call update functions
+    shooter.updateVelocity();
   }
 }
