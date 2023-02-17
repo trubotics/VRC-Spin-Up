@@ -73,51 +73,6 @@ void pre_auton(void)
   intake.setVelocity(100, vex::velocityUnits::pct);
 
   displayStrategy();
-  // allow strategy changes during pre-auton
-  primaryController.ButtonLeft.pressed( // previous strategy [Left]
-      []()
-      {
-        int newStrategy = (int)autonomous.getStrategy() - 1;
-        if (newStrategy < 0)
-          newStrategy = autonomous.getStrategyCount() - 1;
-        autonomous.setStrategy((Strategy)newStrategy);
-        displayStrategy();
-      });
-  primaryController.ButtonRight.pressed( // next strategy [Right]
-      []()
-      {
-        int newStrategy = (int)autonomous.getStrategy() + 1;
-        if (newStrategy >= autonomous.getStrategyCount())
-          newStrategy = 0;
-        autonomous.setStrategy((Strategy)newStrategy);
-        displayStrategy();
-      });
-  primaryController.ButtonUp.pressed( // default strategy [Up]
-      []()
-      {
-        autonomous.setStrategy(Autonomous::DEFAULT_STRATEGY);
-        displayStrategy();
-      });
-  primaryController.ButtonDown.pressed( // no strategy [Down]
-      []()
-      {
-        autonomous.setStrategy(Strategy::None);
-        displayStrategy();
-      });
-
-  // Preset strategy buttons
-  primaryController.ButtonX.pressed( // Loader Roller [X]
-      []()
-      {
-        autonomous.setStrategy(Strategy::LoaderRoller);
-        displayStrategy();
-      });
-  primaryController.ButtonY.pressed( // Side Roller[Y]
-      []()
-      {
-        autonomous.setStrategy(Strategy::SideRoller);
-        displayStrategy();
-      });
 }
 
 void userControl(void)
@@ -240,6 +195,12 @@ void userControl(void)
   }
 }
 
+bool debounce = false;
+int tuningIndex = 0; // The current value being tuned
+// 0 = P
+// 1 = I
+// 2 = D
+
 //
 // Main will set up the competition functions and callbacks.
 //
@@ -262,66 +223,116 @@ int main()
 
   Competition.drivercontrol(userControl);
 
-  int tuningIndex = 0; // The current value being tuned
-  // 0 = P
-  // 1 = I
-  // 2 = D
-  bool debounce = false;
-
   // Prevent main from exiting with an infinite loop.
   while (true)
   {
     wait(100, msec);
 
-    // Temporary tuning mode
-    if (primaryController.ButtonY.pressing() && primaryController.ButtonR2.pressing())
-    {
-      double increment = 0.01;
-      if (primaryController.ButtonR1.pressing())
-      {
-        increment = 0.1;
-      }
+    tuningAdjuster();
+    strategyChanger();
+    debounceResetter();
 
-      if (!debounce)
-      {
-        // change the tuning index
-        if (primaryController.ButtonLeft.pressing())
-        {
-          tuningIndex--;
-          if (tuningIndex < 0)
-          {
-            tuningIndex = 2;
-          }
-          debounce = true;
-        }
-        else if (primaryController.ButtonRight.pressing())
-        {
-          tuningIndex++;
-          if (tuningIndex > 2)
-          {
-            tuningIndex = 0;
-          }
-          debounce = true;
-        }
-        // change the value
-        else if (primaryController.ButtonUp.pressing())
-        {
-          shooter.changePID(tuningIndex, increment);
-          debounce = true;
-        }
-        else if (primaryController.ButtonDown.pressing())
-        {
-          shooter.changePID(tuningIndex, -increment);
-          debounce = true;
-        }
-      }
-    }
-    if (!(primaryController.ButtonUp.pressing() || primaryController.ButtonDown.pressing() || primaryController.ButtonLeft.pressing() || primaryController.ButtonRight.pressing()))
+    // call update functions
+    shooter.updateVelocity();
+  }
+}
+
+// The following functions are called when the robot is disabled
+void strategyChanger() // Allows switching of strategies
+{
+  // allow strategy changes during pre-auton
+
+  if (!debounce)
+  {
+    if (primaryController.ButtonLeft.pressing()) // previous strategy [Left]
     {
-      debounce = false;
+      int newStrategy = (int)autonomous.getStrategy() - 1;
+      if (newStrategy < 0)
+        newStrategy = autonomous.getStrategyCount() - 1;
+      autonomous.setStrategy((Strategy)newStrategy);
+      displayStrategy();
+      debounce = true;
+    }
+    else if (primaryController.ButtonRight.pressing()) // next strategy [Right]
+    {
+      int newStrategy = (int)autonomous.getStrategy() + 1;
+      if (newStrategy >= autonomous.getStrategyCount())
+        newStrategy = 0;
+      autonomous.setStrategy((Strategy)newStrategy);
+      displayStrategy();
+      debounce = true;
     }
   }
+  
+  // Preset-like strategy buttons
+  if (primaryController.ButtonUp.pressing()) // default strategy [Up]
+    autonomous.setStrategy(Autonomous::DEFAULT_STRATEGY);
+  if (primaryController.ButtonDown.pressing()) // no strategy [Down]
+    autonomous.setStrategy(Strategy::None);
+      
+  // True-preset strategy buttons
+  if (primaryController.ButtonX.pressing()) // Loader Roller [X]
+    autonomous.setStrategy(Strategy::LoaderRoller);
+  if (primaryController.ButtonY.pressing()) // Side Roller[Y]
+    autonomous.setStrategy(Strategy::SideRoller);
 
-  // call update functions
-  shooter.updateVelocity();
+    displayStrategy();
+}
+
+void tuningAdjuster()
+{
+  // Temporary tuning mode
+  if (primaryController.ButtonY.pressing() && primaryController.ButtonR2.pressing())
+  {
+    double increment = 0.01;
+    if (primaryController.ButtonR1.pressing())
+    {
+      increment = 0.1;
+    }
+
+    if (!debounce)
+    {
+      // change the tuning index
+      if (primaryController.ButtonLeft.pressing())
+      {
+        tuningIndex--;
+        if (tuningIndex < 0)
+        {
+          tuningIndex = 2;
+        }
+        debounce = true;
+      }
+      else if (primaryController.ButtonRight.pressing())
+      {
+        tuningIndex++;
+        if (tuningIndex > 2)
+        {
+          tuningIndex = 0;
+        }
+        debounce = true;
+      }
+      // change the value
+      else if (primaryController.ButtonUp.pressing())
+      {
+        shooter.changePID(tuningIndex, increment);
+        debounce = true;
+      }
+      else if (primaryController.ButtonDown.pressing())
+      {
+        shooter.changePID(tuningIndex, -increment);
+        debounce = true;
+      }
+    }
+  }
+}
+
+void debounceResetter()
+{
+  if (!(primaryController.ButtonUp.pressing()
+  || primaryController.ButtonDown.pressing() 
+  || primaryController.ButtonLeft.pressing() 
+  || primaryController.ButtonRight.pressing()))
+  {
+    debounce = false;
+  }
 }
