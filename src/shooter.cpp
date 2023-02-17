@@ -37,6 +37,14 @@ void Shooter::changePID(int index, double deltaPID)
     kI += deltaPID;
     break;
   }
+
+  Brain->Screen.clearScreen();
+  Brain->Screen.setCursor(1, 1);
+  Brain->Screen.print("kP: %f", kP);
+  Brain->Screen.setCursor(2, 1);
+  Brain->Screen.print("kI: %f", kI);
+  Brain->Screen.setCursor(3, 1);
+  Brain->Screen.print("kD: %f", kD);
 }
 
 //////////////////////////////////////////////////////
