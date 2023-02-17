@@ -227,20 +227,20 @@ void strategyChanger() // Allows switching of strategies
       debounce = true;
     }
   }
-  
+
   // Preset-like strategy buttons
   if (primaryController.ButtonUp.pressing()) // default strategy [Up]
     autonomous.setStrategy(Autonomous::DEFAULT_STRATEGY);
   if (primaryController.ButtonDown.pressing()) // no strategy [Down]
     autonomous.setStrategy(Strategy::None);
-      
+
   // True-preset strategy buttons
   if (primaryController.ButtonX.pressing()) // Loader Roller [X]
     autonomous.setStrategy(Strategy::LoaderRoller);
   if (primaryController.ButtonY.pressing()) // Side Roller[Y]
     autonomous.setStrategy(Strategy::SideRoller);
 
-    displayStrategy();
+  displayStrategy();
 }
 
 void tuningAdjuster()
@@ -292,10 +292,7 @@ void tuningAdjuster()
 
 void debounceResetter()
 {
-  if (!(primaryController.ButtonUp.pressing()
-  || primaryController.ButtonDown.pressing() 
-  || primaryController.ButtonLeft.pressing() 
-  || primaryController.ButtonRight.pressing()))
+  if (!(primaryController.ButtonUp.pressing() || primaryController.ButtonDown.pressing() || primaryController.ButtonLeft.pressing() || primaryController.ButtonRight.pressing()))
   {
     debounce = false;
   }
@@ -328,9 +325,12 @@ int main()
   {
     wait(100, msec);
 
-    tuningAdjuster();
-    strategyChanger();
-    debounceResetter();
+    if (!Competition.isEnabled())
+    {
+      tuningAdjuster();
+      strategyChanger();
+      debounceResetter();
+    }
 
     // call update functions
     shooter.updateVelocity();
