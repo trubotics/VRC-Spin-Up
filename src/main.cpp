@@ -58,7 +58,6 @@ Autonomous autonomous = Autonomous(drive, shooter, roller,
 
 void displayStrategy()
 {
-  return;
   Brain.Screen.clearScreen();
   Brain.Screen.setCursor(1, 1);
   Brain.Screen.print(autonomous.getStrategyString().c_str());
