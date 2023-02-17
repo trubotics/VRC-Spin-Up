@@ -17,7 +17,7 @@ Shooter::Shooter(brain Brain, motor_group flywheel, vex::triport::port port)
 {
   this->Brain = &Brain;
   this->flywheel = &flywheel;
-  this->flywheel->setVelocity(targetVelocity, vex::velocityUnits::pct); // set initial flywheel velocity
+  this->flywheel->setVelocity(0, vex::velocityUnits::pct); // set initial flywheel velocity
   pneumatics p = pneumatics(port);
   this->piston = &p;
 }
@@ -110,7 +110,7 @@ void Shooter::setTargetVelocity(double targetVelocity)
 
 void Shooter::spinUp() // get it?
 {
-  flywheel->setVelocity(0, vex::velocityUnits::pct); // wait for PID function to set velocity
+  //flywheel->setVelocity(0, vex::velocityUnits::pct); // wait for PID function to set velocity
   sumError = lastError = lastTime = 0;
   isSpinning = true;
   flywheel->spin(vex::directionType::fwd);
