@@ -261,6 +261,7 @@ int main()
       }
 
       if (!debounce)
+      {
         // change the tuning index
         if (primaryController.ButtonLeft.pressing())
         {
@@ -291,6 +292,7 @@ int main()
           shooter.changePID(tuningIndex, -increment);
           debounce = true;
         }
+      }
     }
     if (!(primaryController.ButtonUp.pressing() || primaryController.ButtonDown.pressing() || primaryController.ButtonLeft.pressing() || primaryController.ButtonRight.pressing()))
     {
