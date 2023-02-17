@@ -29,11 +29,21 @@ Strategy Autonomous::getStrategy()
 }
 std::string Autonomous::getStrategyString()
 {
-    return strategyMap[strategy];
+    switch (strategy)
+    {
+    case Strategy::None:
+        return "None";
+    case Strategy::LoaderRoller:
+        return "Loader Roller";
+    case Strategy::SideRoller:
+        return "Side Roller";
+    default:
+        return "Unknown";
+    }
 }
 int Autonomous::getStrategyCount()
 {
-    return strategyMap.size();
+    return 3;
 }
 void Autonomous::setStrategy(Strategy strategy)
 {

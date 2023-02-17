@@ -2,7 +2,6 @@
 #define AUTONOMOUS_H
 
 #include <string>
-#include <map>
 #include <vex.h>
 #include <mecanumDrivetrain.h>
 #include <shooter.h>
@@ -30,13 +29,6 @@ enum class Strategy
 class Autonomous
 {
 private:
-    // Strategy map to string
-    std::map<Strategy, std::string> strategyMap = {
-        {Strategy::None, "None"},
-        {Strategy::LoaderRoller, "Loader Roller"},
-        {Strategy::SideRoller, "Side Roller"},
-    };
-
     Strategy strategy = DEFAULT_STRATEGY;
 
     MecanumDriveTrain *drive = nullptr;

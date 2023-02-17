@@ -131,26 +131,11 @@ bool Shooter::fireDisk(bool skipPreCheck)
     return false; // failed prechecks
   }
 
-  Brain->Screen.clearScreen();
-  Brain->Screen.setCursor(1, 1);
-  Brain->Screen.print(piston);
-
   lastFiringTime = (*Brain).timer(timeUnits::msec); // update last firing time
-  
-  Brain->Screen.setCursor(2,1);
-  Brain->Screen.print(piston);
 
   // fire disk (extend piston and retract after 75 ms)
   piston->set(true);
-
-  Brain->Screen.setCursor(3,1);
-  Brain->Screen.print("Firing");
-
   wait(75, timeUnits::msec); // wait for piston to extend fully
-
-  Brain->Screen.setCursor(4,1);
-  Brain->Screen.print("Retracting");
-
   piston->set(false);
 
   return true; // success
