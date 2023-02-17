@@ -14,10 +14,10 @@ private:
     double lastFiringTime = -200; // The time when the last disk was fired
     bool isSpinning = false;      // Whether the flywheel is spinning or not
 
-    // PID "constants" <-- we need to tune these
-    double kP = 0.5; // needs tuning
-    double kD = 0; // unsure if needed
-    double kI = 0; // unsure if needed
+    // PID "constants"
+    double kP = 0.05;
+    double kD = 0.09;
+    double kI = 0.01;
 public:
     Shooter(brain Brain, motor_group flywheel, vex::triport::port port);
 
