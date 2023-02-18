@@ -172,7 +172,7 @@ void userControl(void)
   secondaryController.ButtonR1.pressed( // fire disk (there is a list of preconditions specified in the class) [R1]
       []()
       {
-        shooter.fireDisk();
+        shooter.fireDisk(true);
       });
   secondaryController.ButtonL1.pressed( // start smart roller [L1]
       []()
