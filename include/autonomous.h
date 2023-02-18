@@ -54,7 +54,6 @@ public:
 
     std::string getStrategyString();
     Strategy getStrategy();
-    int getStrategyCount();
     void setStrategy(Strategy strategy);
 };
 

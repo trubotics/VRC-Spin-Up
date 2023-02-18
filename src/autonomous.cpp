@@ -41,10 +41,6 @@ std::string Autonomous::getStrategyString()
         return "Unknown";
     }
 }
-int Autonomous::getStrategyCount()
-{
-    return 3;
-}
 void Autonomous::setStrategy(Strategy strategy)
 {
     Autonomous::strategy = strategy;
