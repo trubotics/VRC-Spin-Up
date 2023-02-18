@@ -42,7 +42,7 @@ private:
     void sensorStrafe(double targetDistance, double velocity = 50);
     void sensorRotate(double deltaAngle, double velocity = 50);
     void rollRoller();
-    void fireDisk(int count = 2, double velocity = 100);
+    void fireDisk(int count = 2, double velocity = 70);
 
 public:
     static const Strategy DEFAULT_STRATEGY = Strategy::LoaderRoller;

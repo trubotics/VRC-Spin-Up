@@ -152,22 +152,22 @@ void userControl(void)
   secondaryController.ButtonUp.pressed( // increase flywheel speed (10% increments) [Up]
       []()
       {
-        shooter.setTargetVelocity(100);
+        shooter.setTargetVelocity(80);
       });
   secondaryController.ButtonDown.pressed( // decrease flywheel speed (10% increments) [Down]
       []()
       {
-        shooter.setTargetVelocity(70);
+        shooter.setTargetVelocity(50);
       });
   secondaryController.ButtonLeft.pressed( // set flywheel speed to the minimum value [Left]
       []()
       {
-        shooter.setTargetVelocity(80); // will be overriden by the shooter class
+        shooter.setTargetVelocity(60); // will be overriden by the shooter class
       });
   secondaryController.ButtonRight.pressed( // set flywheel speed to the maximum value [Right]
       []()
       {
-        shooter.setTargetVelocity(90);
+        shooter.setTargetVelocity(70);
       });
   secondaryController.ButtonR1.pressed( // fire disk (there is a list of preconditions specified in the class) [R1]
       []()
