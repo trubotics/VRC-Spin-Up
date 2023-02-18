@@ -63,6 +63,51 @@ void displayStrategy()
   Brain.Screen.print(autonomous.getStrategyString().c_str());
 }
 
+// Creates an onscreen button
+void createButton(int x, int y, int width, int height, std::string text, color penColor, color fillColor)
+{
+  Brain.Screen.setPenColor(penColor);
+  Brain.Screen.setFillColor(fillColor);
+
+  Brain.Screen.drawRectangle(x, y, width, height);
+  Brain.Screen.printAt(x + width / 2, y + height / 2, text.c_str());
+
+  Brain.Screen.setPenColor(color::white);
+  Brain.Screen.setFillColor(color::black);
+}
+
+void drawStrategyMenu()
+{
+  displayStrategy();
+  Brain.Screen.newLine();
+  // create a rectangle with a strategy name for each strategy
+  // strategies: None, Loader Roller, Side Roller
+  createButton(0, 100, 100, 50, "None", color::black, color::white);
+  createButton(100, 100, 100, 50, "Loader Roller", color::black, color::yellow); 
+  createButton(200, 100, 100, 50, "Side Roller", color::black, color::purple);
+}
+
+void selectStrategy()
+{
+  // Check if along button row
+  if (Brain.Screen.yPosition() < 100 || Brain.Screen.yPosition() > 150)
+    return;
+
+  // Set the strategy based on the location pressed
+  if (Brain.Screen.xPosition() < 100)
+  {
+   autonomous.setStrategy(Strategy::None); 
+  }
+  else if (Brain.Screen.xPosition() < 200)
+  {
+    autonomous.setStrategy(Strategy::LoaderRoller);
+  }
+  else if (Brain.Screen.xPosition() < 300)
+  {
+    autonomous.setStrategy(Strategy::SideRoller);
+  }
+}
+
 void pre_auton(void)
 {
   // flywheel
@@ -199,51 +244,6 @@ void userControl(void)
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
-  }
-}
-
-// Creates an onscreen button
-void createButton(int x, int y, int width, int height, std::string text, color penColor, color fillColor)
-{
-  Brain.Screen.setPenColor(penColor);
-  Brain.Screen.setFillColor(fillColor);
-
-  Brain.Screen.drawRectangle(x, y, width, height);
-  Brain.Screen.printAt(x + width / 2, y + height / 2, text.c_str());
-
-  Brain.Screen.setPenColor(color::white);
-  Brain.Screen.setFillColor(color::black);
-}
-
-void drawStrategyMenu()
-{
-  displayStrategy();
-  Brain.Screen.newLine();
-  // create a rectangle with a strategy name for each strategy
-  // strategies: None, Loader Roller, Side Roller
-  createButton(0, 100, 100, 50, "None", color::black, color::white);
-  createButton(100, 100, 100, 50, "Loader Roller", color::black, color::yellow); 
-  createButton(200, 100, 100, 50, "Side Roller", color::black, color::purple);
-}
-
-void selectStrategy()
-{
-  // Check if along button row
-  if (Brain.Screen.yPosition() < 100 || Brain.Screen.yPosition() > 150)
-    return;
-
-  // Set the strategy based on the location pressed
-  if (Brain.Screen.xPosition() < 100)
-  {
-   autonomous.setStrategy(Strategy::None); 
-  }
-  else if (Brain.Screen.xPosition() < 200)
-  {
-    autonomous.setStrategy(Strategy::LoaderRoller);
-  }
-  else if (Brain.Screen.xPosition() < 300)
-  {
-    autonomous.setStrategy(Strategy::SideRoller);
   }
 }
 
