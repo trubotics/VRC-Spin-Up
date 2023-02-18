@@ -21,31 +21,6 @@ Shooter::Shooter(brain Brain, motor_group flywheel, pneumatics p)
   this->piston = &p;
 }
 
-// temp
-void Shooter::changePID(int index, double deltaPID)
-{
-  switch (index)
-  {
-  case 0:
-    kP += deltaPID;
-    break;
-  case 1:
-    kI += deltaPID;
-    break;
-  case 2:
-    kD += deltaPID;
-    break;
-  }
-
-  Brain->Screen.clearScreen();
-  Brain->Screen.setCursor(1, 1);
-  Brain->Screen.print("kP: %f", kP);
-  Brain->Screen.setCursor(2, 1);
-  Brain->Screen.print("kI: %f", kI);
-  Brain->Screen.setCursor(3, 1);
-  Brain->Screen.print("kD: %f", kD);
-}
-
 //////////////////////////////////////////////////////
 /// @brief basic PID control for flywheel velocity ///
 //////////////////////////////////////////////////////
