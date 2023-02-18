@@ -151,7 +151,7 @@ void Autonomous::run()
         break;
     case Strategy::LoaderRoller:
         // move a little left to get into position
-        sensorStrafe(-32);
+        sensorStrafe(-30);
         rollRoller();
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
@@ -159,7 +159,7 @@ void Autonomous::run()
         break;
     case Strategy::SideRoller:
         // move one tile right to roller
-        sensorStrafe(32);
+        sensorStrafe(30);
         rollRoller();
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
