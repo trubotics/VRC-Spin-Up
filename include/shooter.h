@@ -19,7 +19,7 @@ private:
     double kI = 0.09;
     double kD = 0.01;
 public:
-    Shooter(brain Brain, motor_group flywheel, vex::triport::port port);
+    Shooter(brain Brain, motor_group flywheel, pneumatics piston);
 
     // temp
     void changePID(int index, double deltaPID);

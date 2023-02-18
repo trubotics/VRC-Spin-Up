@@ -48,7 +48,11 @@ motor flywheelBack = motor(PORT12, ratio36_1, false);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
 // firing piston
-Shooter shooter = Shooter(Brain, flywheel, Brain.ThreeWirePort.A);
+pneumatics firingPiston = pneumatics(Brain.ThreeWirePort.A);
+Shooter shooter = Shooter(Brain, flywheel, firingPiston);
+
+// endgame
+pneumatics endgame = pneumatics(Brain.ThreeWirePort.B);
 
 // initialize autonomous class
 Autonomous autonomous = Autonomous(drive, shooter, roller,
@@ -240,6 +244,11 @@ void userControl(void)
     else
     {
       shooter.stop();
+    }
+
+    // expansion endgame
+    if (primaryController.ButtonY.pressing()) {
+      endgame.set(true);
     }
 
     wait(20, msec); // Sleep the task for a short amount of time to

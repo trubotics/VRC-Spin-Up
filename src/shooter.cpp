@@ -13,12 +13,11 @@
 
 using namespace vex;
 
-Shooter::Shooter(brain Brain, motor_group flywheel, vex::triport::port port)
+Shooter::Shooter(brain Brain, motor_group flywheel, pneumatics p)
 {
   this->Brain = &Brain;
   this->flywheel = &flywheel;
   this->flywheel->setVelocity(0, vex::velocityUnits::pct); // set initial flywheel velocity
-  pneumatics p = pneumatics(port);
   this->piston = &p;
 }
 
