@@ -145,13 +145,16 @@ void Autonomous::fireDisk(int count, double velocity)
 
 void Autonomous::run()
 {
+    leftDistance->objectDistance(vex::distanceUnits::in);
+    rightDistance->objectDistance(vex::distanceUnits::in);
+
     switch (Autonomous::strategy)
     {
     case Strategy::None:
         break;
     case Strategy::LoaderRoller:
         // move a little left to get into position
-        sensorStrafe(-30);
+        sensorStrafe(-24);
         rollRoller();
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
@@ -159,7 +162,7 @@ void Autonomous::run()
         break;
     case Strategy::SideRoller:
         // move one tile right to roller
-        sensorStrafe(30);
+        sensorStrafe(24);
         rollRoller();
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
