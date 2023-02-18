@@ -28,10 +28,10 @@ controller primaryController = controller(primary);
 controller secondaryController = controller(partner);
 
 // sensors
-distance leftDist = distance(PORT1);
-distance rightDist = distance(PORT2);
+distance leftDist = distance(PORT17);
+distance rightDist = distance(PORT7);
 inertial inertialSensor = inertial(PORT3);
-optical opticalSensor = optical(PORT4);
+optical opticalSensor = optical(PORT20);
 
 // drive train
 MecanumDriveTrain drive = MecanumDriveTrain(PORT15, true, PORT16, true, PORT5, false, PORT6, false);
