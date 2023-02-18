@@ -51,8 +51,8 @@ motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 pneumatics firingPiston = pneumatics(Brain.ThreeWirePort.A);
 Shooter shooter = Shooter(Brain, flywheel, firingPiston);
 
-// endgame
-pneumatics endgame = pneumatics(Brain.ThreeWirePort.B);
+// endgame expansion
+pneumatics expansion = pneumatics(Brain.ThreeWirePort.B);
 
 // initialize autonomous class
 Autonomous autonomous = Autonomous(drive, shooter, roller,
@@ -87,7 +87,7 @@ void drawStrategyMenu()
   // create a rectangle with a strategy name for each strategy
   // strategies: None, Loader Roller, Side Roller
   createButton(0, 100, 100, 50, "None", color::black, color::white);
-  createButton(100, 100, 100, 50, "Loader Roller", color::black, color::yellow); 
+  createButton(100, 100, 100, 50, "Loader Roller", color::black, color::yellow);
   createButton(200, 100, 100, 50, "Side Roller", color::black, color::purple);
 }
 
@@ -100,7 +100,7 @@ void selectStrategy()
   // Set the strategy based on the location pressed
   if (Brain.Screen.xPosition() < 100)
   {
-   autonomous.setStrategy(Strategy::None); 
+    autonomous.setStrategy(Strategy::None);
   }
   else if (Brain.Screen.xPosition() < 200)
   {
@@ -246,10 +246,19 @@ void userControl(void)
       shooter.stop();
     }
 
-    // expansion endgame
-    if (primaryController.ButtonY.pressing()) {
-      endgame.set(true);
-    }
+    if (primaryController.ButtonY.pressing() || secondaryController.ButtonY.pressing()) // endgame expansion (both) [Y]
+    {
+      double pressedStartTime = Brain.timer(timeUnits::msec);
+      primaryController.rumble("-");
+      secondaryController.rumble("-");
+      waitUntil(!(primaryController.ButtonY.pressing() && secondaryController.ButtonY.pressing()) || Brain.timer(timeUnits::msec) - pressedStartTime > 1000); // wait until the button is released or 1 second has passed
+
+      // only activate if the buttons were held for 1 second
+      if (Brain.timer(timeUnits::msec) - pressedStartTime > 1000)
+      {
+        expansion.set(true);
+      }
+    };
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
@@ -343,7 +352,7 @@ int main()
     if (Competition.isEnabled())
     {
       Brain.Screen.clearScreen();
-      Brain.Screen.pressed([](){});
+      Brain.Screen.pressed([]() {});
     }
 
     // call update functions
