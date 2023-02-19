@@ -14,6 +14,11 @@ private:
     double lastFiringTime = -200; // The time when the last disk was fired
     bool isSpinning = false;      // Whether the flywheel is spinning or not
 
+    // Speed constants
+    const double MIN_VELOCITY = 60;
+    const double MAX_VELOCITY = 75;
+    const double VELOCITY_RANGE = MAX_VELOCITY - MIN_VELOCITY; 
+
     // PID constants
     const double kP = 0.05;
     const double kI = 0.09;
@@ -22,6 +27,7 @@ public:
     Shooter(brain Brain, motor_group flywheel, pneumatics piston);
 
     void setTargetVelocity(double targetVelocity);
+    void setRelativeTargetVelocity(double targetVelocity);
     void updateVelocity();
     // void changeTargetVelocity(double deltaVelocity); // set target velocity to current velocity + deltaVelocity
     void spinUp();

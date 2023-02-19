@@ -149,30 +149,30 @@ void userControl(void)
         roller.rollRoller();
       });
 
-  secondaryController.ButtonUp.pressed( // increase flywheel speed (10% increments) [Up]
+  secondaryController.ButtonUp.pressed( // set flywheel to the max speed [Up]
       []()
       {
-        shooter.setTargetVelocity(80);
+        shooter.setRelativeTargetVelocity(1);
       });
-  secondaryController.ButtonDown.pressed( // decrease flywheel speed (10% increments) [Down]
+  secondaryController.ButtonDown.pressed( // set flywheel to the min speed [Down]
       []()
       {
-        shooter.setTargetVelocity(50);
+        shooter.setRelativeTargetVelocity(0);
       });
-  secondaryController.ButtonLeft.pressed( // set flywheel speed to the minimum value [Left]
+  secondaryController.ButtonLeft.pressed( // set flywheel to 1/3 speed [Left]
       []()
       {
-        shooter.setTargetVelocity(60); // will be overriden by the shooter class
+        shooter.setRelativeTargetVelocity(1/3); 
       });
-  secondaryController.ButtonRight.pressed( // set flywheel speed to the maximum value [Right]
+  secondaryController.ButtonRight.pressed( // set flywheel to 2/3 speed [Right]
       []()
       {
-        shooter.setTargetVelocity(70);
+        shooter.setRelativeTargetVelocity(2/3);
       });
   secondaryController.ButtonR1.pressed( // fire disk (there is a list of preconditions specified in the class) [R1]
       []()
       {
-        shooter.fireDisk(true);
+        shooter.fireDisk();
       });
   secondaryController.ButtonL1.pressed( // start smart roller [L1]
       []()
