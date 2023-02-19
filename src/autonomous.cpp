@@ -137,7 +137,7 @@ void Autonomous::fireDisk(int count, double velocity)
     for (int i = 0; i < count; i++)
     {
         // manually wait for flywheel to spin up
-        wait(1, sec);
+        wait(2, sec);
         waitUntil(shooter->fireDisk(true)); // wait until disk is fired successfully
     }
 
