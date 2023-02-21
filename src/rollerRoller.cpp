@@ -32,24 +32,27 @@ void RollerRoller::rollRoller()
     bool blueDetected = isBlueDetected();
     if (isBlue == blueDetected)
     {
+        isSpinning = true;
         roller->spin(vex::directionType::fwd);
-        waitUntil(isBlue != isBlueDetected() || roller->isDone());
+        waitUntil(isBlue != isBlueDetected() || !isSpinning);
     }
     else
     {
         roller->spin(vex::directionType::rev);
-        waitUntil(isBlue == isBlueDetected() || roller->isDone());
+        waitUntil(isBlue == isBlueDetected() || !isSpinning);
     }
 
-    roller->stop();
+    stopRoller();
 }
 
 // Manual control in case nothing works
 void RollerRoller::rollRoller(directionType direction)
 {
+    isSpinning = true;
     roller->spin(direction);
 }
 void RollerRoller::stopRoller()
 {
+    isSpinning = false;
     roller->stop();
 }
