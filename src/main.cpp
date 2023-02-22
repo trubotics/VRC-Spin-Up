@@ -215,7 +215,7 @@ void userControl(void)
     {
       intake.spin(vex::reverse);
     }
-    else
+    else if (!primaryController.ButtonA.pressing())
     {
       intake.stop();
     }
