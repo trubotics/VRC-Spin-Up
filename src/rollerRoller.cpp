@@ -30,15 +30,15 @@ bool RollerRoller::isBlueDetected()
 void RollerRoller::rollRoller()
 {
     bool blueDetected = isBlueDetected();
+    isSpinning = true;
     if (isBlue == blueDetected)
     {
-        isSpinning = true;
-        roller->spin(vex::directionType::fwd);
+        roller->spin(vex::directionType::rev);
         waitUntil(isBlue != isBlueDetected() || !isSpinning);
     }
     else
     {
-        roller->spin(vex::directionType::rev);
+        roller->spin(vex::directionType::fwd);
         waitUntil(isBlue == isBlueDetected() || !isSpinning);
     }
 
