@@ -274,34 +274,27 @@ int main()
   pre_auton();
 
   // Set up competition functions
-  Competition.autonomous([]()
-                         { autonomous.run(); });
+  Competition.autonomous(
+      []()
+      {
+        Brain.Screen.clearScreen();
+        autonomous.run();
+      });
 
   Competition.drivercontrol(userControl);
-
-  int funnyTimer = 0;
 
   // Prevent main from exiting with an infinite loop.
   while (true)
   {
     wait(100, msec);
-    funnyTimer += 100;
 
     // disable preauton config menu when enabled
     if (Competition.isEnabled())
     {
-      Brain.Screen.clearScreen();
       Brain.Screen.pressed([]() {});
     }
 
     // call update functions
     shooter.updateVelocity();
-
-    Brain.Screen.setCursor(20, 0);
-    Brain.Screen.print(funnyTimer);
-    Brain.Screen.newLine();
-    Brain.Screen.print(Brain.Timer.system());
-    Brain.Screen.newLine();
-    Brain.Screen.print(Brain.timer(timeUnits::msec));
   }
 }

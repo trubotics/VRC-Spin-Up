@@ -60,15 +60,6 @@ void Shooter::updateVelocity()
   // modify velocity
   double output = proportional + integral + derivative;
   flywheel->setVelocity(targetVelocity + output, vex::velocityUnits::pct); // set new flywheel velocity target
-
-  // no idea if these print statements correct
-  Brain->Screen.clearScreen();
-  Brain->Screen.setCursor(1, 1);
-  Brain->Screen.print("Modified Target Velocity: %f", targetVelocity + output);
-  Brain->Screen.setCursor(2, 1);
-  Brain->Screen.print("Measured Velocity: %f", this->flywheel->velocity(vex::velocityUnits::pct));
-  Brain->Screen.setCursor(4, 1);
-  Brain->Screen.print("PID: %f %f %f", kP, kI, kD);
 }
 void Shooter::setTargetVelocity(double targetVelocity)
 {
@@ -77,8 +68,8 @@ void Shooter::setTargetVelocity(double targetVelocity)
 
   sumError = lastError = lastTime = 0;
 
-  Brain->Screen.clearScreen();
   Brain->Screen.setCursor(1, 1);
+  Brain->Screen.clearLine();
   Brain->Screen.print("Target Velocity: %f", this->targetVelocity);
 }
 
