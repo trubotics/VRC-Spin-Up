@@ -229,7 +229,7 @@ void userControl(void)
     {
       roller.rollRoller(vex::reverse);
     }
-    else
+    else if (!primaryController.ButtonA.pressing())
     {
       roller.stopRoller();
     }
