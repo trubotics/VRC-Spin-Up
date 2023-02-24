@@ -7,13 +7,6 @@ using namespace vex;
 class Shooter
 {
 private:
-    brain *Brain = nullptr;
-    motor_group *flywheel = nullptr;
-    pneumatics *piston = nullptr;
-    double targetVelocity = 80;   // The velocity the flywheel should be at to fire
-    double lastFiringTime = -200; // The time when the last disk was fired
-    bool isSpinning = false;      // Whether the flywheel is spinning or not
-
     // Speed constants
     const double MIN_VELOCITY = 60;
     const double MAX_VELOCITY = 75;
@@ -23,6 +16,13 @@ private:
     const double kP = 0.05;
     const double kI = 0.09;
     const double kD = 0.01;
+    
+    brain *Brain = nullptr;
+    motor_group *flywheel = nullptr;
+    pneumatics *piston = nullptr;
+    double targetVelocity = MAX_VELOCITY;   // The velocity the flywheel should be at to fire
+    double lastFiringTime = -200; // The time when the last disk was fired
+    bool isSpinning = false;      // Whether the flywheel is spinning or not
 public:
     Shooter(brain Brain, motor_group flywheel, pneumatics piston);
 
