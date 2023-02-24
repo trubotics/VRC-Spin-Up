@@ -8,6 +8,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include <vex.h>
+#include <buildDefines.h>
 #include <autonomous.h>
 #include <mecanumDrivetrain.h>
 #include <intake.h>
