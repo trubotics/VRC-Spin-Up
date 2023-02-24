@@ -21,6 +21,7 @@ public:
     void calibrateTeamColor();
     void rollRoller();
     void rollRoller(directionType direction);
+    void rollRoller(bool L1, bool L2);
     void stopRoller();
 };
 

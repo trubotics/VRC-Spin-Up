@@ -51,6 +51,17 @@ void RollerRoller::rollRoller(directionType direction)
     isSpinning = true;
     roller->spin(direction);
 }
+void RollerRoller::rollRoller(bool L1, bool L2)
+{
+    isSpinning = true;
+    if (L1 == L2) // If both are pressed or neither are pressed, stop
+        roller->stop();
+    // If only one is pressed, spin in that direction
+    else if (L1) // Up
+        roller->spin(vex::directionType::fwd);
+    else if (L2) // Down
+        roller->spin(vex::directionType::rev);
+}
 void RollerRoller::stopRoller()
 {
     isSpinning = false;
