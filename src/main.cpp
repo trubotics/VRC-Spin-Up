@@ -10,8 +10,10 @@
 #include <vex.h>
 #include <autonomous.h>
 #include <mecanumDrivetrain.h>
+#include <intake.h>
 #include <shooter.h>
 #include <rollerRoller.h>
+#include <expansion.h>
 
 using namespace vex;
 
@@ -37,7 +39,7 @@ optical opticalSensor = optical(PORT20);
 MecanumDriveTrain drive = MecanumDriveTrain(PORT15, true, PORT16, true, PORT5, false, PORT6, false);
 
 // intake
-motor intake = motor(PORT8, ratio6_1, true);
+Intake intake = Intake(PORT8);
 
 // roller
 RollerRoller roller = RollerRoller(PORT10, opticalSensor);
@@ -52,7 +54,8 @@ pneumatics firingPiston = pneumatics(Brain.ThreeWirePort.A);
 Shooter shooter = Shooter(Brain, flywheel, firingPiston);
 
 // endgame expansion
-pneumatics expansion = pneumatics(Brain.ThreeWirePort.B);
+pneumatics expansionPiston = pneumatics(Brain.ThreeWirePort.B);
+Expansion expansion = Expansion(expansionPiston, primaryController, secondaryController);
 
 // initialize autonomous class
 Autonomous autonomous = Autonomous(drive, shooter, roller,
@@ -117,8 +120,6 @@ void pre_auton(void)
   // flywheel
   // velocity managed by shooter
   flywheel.setStopping(vex::brakeType::coast);
-  // intake
-  intake.setVelocity(100, vex::velocityUnits::pct);
 
   displayStrategy();
   drawStrategyMenu();
@@ -131,6 +132,149 @@ void pre_auton(void)
       });
 }
 
+void bindControls()
+{
+  // Drivetrain Binds
+  // Toggle drivetrain lock (toggles motors between brake and hold) [X]
+  primaryController.ButtonX.pressed(
+      []()
+      {
+        drive.setMotorLock(!drive.getMotorLock());
+      });
+
+  // Smart Roller Binds
+  // Start smart roller (Player 1) [A+]
+  primaryController.ButtonA.pressed(
+      []()
+      {
+        roller.rollRoller();
+      });
+  // Start smart roller (Player 2) [L1]
+  secondaryController.ButtonL1.pressed(
+      []()
+      {
+        roller.rollRoller();
+      });
+  // Stop smart roller (Player 1) [A-]
+  primaryController.ButtonA.released(
+      []()
+      {
+        roller.stopRoller();
+      });
+  // Stop smart roller (Player 2) [L2]
+  secondaryController.ButtonL2.pressed(
+      []()
+      {
+        roller.stopRoller();
+      });
+
+  // Manual Roller Binds
+  // Roll Upwards (Player 1) [L1+]
+  primaryController.ButtonL1.pressed(
+      []()
+      {
+        roller.rollRoller(true, primaryController.ButtonL2.pressing());
+      });
+  // Roll Downwards (Player 1) [L2+]
+  primaryController.ButtonL2.pressed(
+      []()
+      {
+        roller.rollRoller(primaryController.ButtonL1.pressing(), true);
+      });
+  // Stop roller (Player 1) [L1-&L2-]
+  primaryController.ButtonL1.released(
+      []()
+      {
+        roller.rollRoller(false, primaryController.ButtonL2.pressing());
+      });
+  primaryController.ButtonL2.released(
+      []()
+      {
+        roller.rollRoller(primaryController.ButtonL1.pressing(), false);
+      });
+
+  // Intake Binds
+  // Take in (Player 1) [R1+]
+  primaryController.ButtonR1.pressed(
+      []()
+      {
+        intake.spinIntake(true, primaryController.ButtonR2.pressing());
+      });
+  // Spit out (Player 1) [R2+]
+  primaryController.ButtonR2.pressed(
+      []()
+      {
+        intake.spinIntake(primaryController.ButtonR1.pressing(), true);
+      });
+  // Stop intake (Player 1) [R1-&R2-]
+  primaryController.ButtonR1.released(
+      []()
+      {
+        intake.spinIntake(false, primaryController.ButtonR2.pressing());
+      });
+  primaryController.ButtonR2.released(
+      []()
+      {
+        intake.spinIntake(primaryController.ButtonR1.pressing(), false);
+      });
+
+  // Shooter Binds (Player 2)
+  // Fire Disk [R1]
+  secondaryController.ButtonR1.pressed(
+      []()
+      {
+        shooter.fireDisk();
+      });
+  // Spin up flywheel [R2+]
+  secondaryController.ButtonR2.pressed(
+      []()
+      {
+        shooter.spinUp();
+      });
+  // Stop flywheel [R2-]
+  secondaryController.ButtonR2.released(
+      []()
+      {
+        shooter.stop();
+      });
+  // Set flywheel to the max speed [Up]
+  secondaryController.ButtonUp.pressed(
+      []()
+      {
+        shooter.setRelativeTargetVelocity(1);
+      });
+  // Set flywheel to the min speed [Down]
+  secondaryController.ButtonDown.pressed(
+      []()
+      {
+        shooter.setRelativeTargetVelocity(0);
+      });
+  // Set the flywheel to 1/3 speed [Left]
+  secondaryController.ButtonLeft.pressed(
+      []()
+      {
+        shooter.setRelativeTargetVelocity(1/3);
+      });
+  // Set the flywheel to 2/3 speed [Right]
+  secondaryController.ButtonRight.pressed(
+      []()
+      {
+        shooter.setRelativeTargetVelocity(2/3);
+      });
+
+  // Expansion Binds
+  // Try expanding [Y]
+  primaryController.ButtonY.pressed(
+      []()
+      {
+        expansion.tryExpand();
+      });
+  secondaryController.ButtonY.pressed(
+      []()
+      {
+        expansion.tryExpand();
+      });
+}
 void userControl(void)
 {
   // User control code here, inside the loop
@@ -138,52 +282,7 @@ void userControl(void)
   drive.setMotorLock(false); // unlock the drivetrain
 
   // callback controls
-  primaryController.ButtonX.pressed( // toggle drivetrain lock (sets brake mode to hold) [X]
-      []()
-      {
-        drive.setMotorLock(!drive.getMotorLock());
-      });
-  primaryController.ButtonA.pressed( // start smart roller [A]
-      []()
-      {
-        roller.rollRoller();
-      });
-
-  secondaryController.ButtonUp.pressed( // set flywheel to the max speed [Up]
-      []()
-      {
-        shooter.setRelativeTargetVelocity(1);
-      });
-  secondaryController.ButtonDown.pressed( // set flywheel to the min speed [Down]
-      []()
-      {
-        shooter.setRelativeTargetVelocity(0);
-      });
-  secondaryController.ButtonLeft.pressed( // set flywheel to 1/3 speed [Left]
-      []()
-      {
-        shooter.setRelativeTargetVelocity(1/3); 
-      });
-  secondaryController.ButtonRight.pressed( // set flywheel to 2/3 speed [Right]
-      []()
-      {
-        shooter.setRelativeTargetVelocity(2/3);
-      });
-  secondaryController.ButtonR1.pressed( // fire disk (there is a list of preconditions specified in the class) [R1]
-      []()
-      {
-        shooter.fireDisk();
-      });
-  secondaryController.ButtonL1.pressed( // start smart roller [L1]
-      []()
-      {
-        roller.rollRoller();
-      });
-  secondaryController.ButtonL2.pressed( // stop roller [L2]
-      []()
-      {
-        roller.stopRoller();
-      });
+  bindControls();
 
   while (1)
   {
@@ -205,60 +304,6 @@ void userControl(void)
       turn /= 3;
     }
     drive.drive(forward, strafe, turn);
-
-    // intake (left trigger; top button takes in, bottom button reverses) [R1/R2]
-    if (primaryController.ButtonR1.pressing())
-    {
-      intake.spin(vex::forward);
-    }
-    else if (primaryController.ButtonR2.pressing())
-    {
-      intake.spin(vex::reverse);
-    }
-    else
-    {
-      intake.stop();
-    }
-
-    // backup manual roller spinner (top -> up, bot -> down) for primary [L1/L2]
-    if (primaryController.ButtonL1.pressing())
-    {
-      roller.rollRoller(vex::forward);
-    }
-    else if (primaryController.ButtonL2.pressing())
-    {
-      roller.rollRoller(vex::reverse);
-    }
-    else if (!primaryController.ButtonA.pressing())
-    {
-      roller.stopRoller();
-    }
-
-    // spin flywheel (hold the button to start spinning, release to stop) [R2]
-    if (secondaryController.ButtonR2.pressing())
-    {
-      shooter.spinUp();
-      // update the flywheel velocity with PID
-      shooter.updateVelocity();
-    }
-    else
-    {
-      shooter.stop();
-    }
-
-    if (primaryController.ButtonY.pressing() || secondaryController.ButtonY.pressing()) // endgame expansion (both) [Y]
-    {
-      double pressedStartTime = Brain.timer(timeUnits::msec);
-      primaryController.rumble("-");
-      secondaryController.rumble("-");
-      waitUntil(!(primaryController.ButtonY.pressing() && secondaryController.ButtonY.pressing()) || Brain.timer(timeUnits::msec) - pressedStartTime > 1000); // wait until the button is released or 1 second has passed
-
-      // only activate if the buttons were held for 1 second
-      if (Brain.timer(timeUnits::msec) - pressedStartTime > 1000)
-      {
-        expansion.set(true);
-      }
-    };
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
