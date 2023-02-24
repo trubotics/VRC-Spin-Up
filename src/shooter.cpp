@@ -63,7 +63,7 @@ void Shooter::updateVelocity()
 }
 void Shooter::setTargetVelocity(double targetVelocity)
 {
-    this->targetVelocity = fmin(fmax(targetVelocity, 0), 100); // clamp target velocity between 70% and 100%
+    this->targetVelocity = fmin(fmax(targetVelocity, MIN_VELOCITY), MIN_VELOCITY); // clamp target velocity
   // this->flywheel->setVelocity(this->targetVelocity, vex::velocityUnits::pct);
 
   sumError = lastError = lastTime = 0;
@@ -71,6 +71,11 @@ void Shooter::setTargetVelocity(double targetVelocity)
   Brain->Screen.setCursor(1, 1);
   Brain->Screen.clearLine();
   Brain->Screen.print("Target Velocity: %f", this->targetVelocity);
+}
+void Shooter::setRelativeTargetVelocity(double targetVelocity) // uses the min and max to convert relative to true velocity
+{
+  double trueVelocity = targetVelocity * VELOCITY_RANGE + MIN_VELOCITY;
+  setTargetVelocity(trueVelocity);
 }
 
 void Shooter::spinUp() // get it?
@@ -89,14 +94,16 @@ void Shooter::stop()
 bool Shooter::fireDisk(bool skipPreCheck)
 {
   // check preconditions: firing cooldown, flywheel speed
-  if (!skipPreCheck// &&                                                                   // precheck override
-      //((*Brain).timer(timeUnits::msec) - lastFiringTime <= 75                            // firing cooldown (50 ms)
-       )//|| std::abs((*flywheel).velocity(vex::velocityUnits::pct) - targetVelocity) > 5)) // flywheel speed (+- 5%)
+  if (!skipPreCheck &&                                                                   // precheck override
+      //(Brain->timer(timeUnits::msec) - lastFiringTime <= 75                            // firing cooldown (50 ms)
+      /*||*/ std::abs((*flywheel).velocity(vex::velocityUnits::pct) - targetVelocity) > 5)//) // flywheel speed (+- 5%)
   {
     return false; // failed prechecks
   }
 
-  lastFiringTime = (*Brain).timer(timeUnits::msec); // update last firing time
+  lastFiringTime = Brain->timer(timeUnits::msec); // update last firing time
+  Brain->Screen.setCursor(19, 0);
+  Brain->Screen.print(lastFiringTime);
 
   // fire disk (extend piston and retract after 75 ms)
   piston->set(true);
