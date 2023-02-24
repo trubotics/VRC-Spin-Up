@@ -296,5 +296,9 @@ int main()
 
     // call update functions
     shooter.updateVelocity();
+
+    // display git commit hash
+    Brain.Screen.setCursor(20, 1);
+    Brain.Screen.print("Git Commit: %s", VERSION);
   }
 }

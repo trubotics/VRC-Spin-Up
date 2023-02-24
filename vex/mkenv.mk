@@ -58,6 +58,9 @@ else
 Q =
 endif
 
+# git hash 
+GIT_HASH = $(shell git rev-parse --short HEAD)
+
 # compile and link tools
 CC      = clang
 CXX     = clang
@@ -66,7 +69,7 @@ SIZE    = arm-none-eabi-size
 LINK    = arm-none-eabi-ld
 ARCH    = arm-none-eabi-ar
 ECHO    = @echo
-DEFINES = -DVexV5
+DEFINES = -DVexV5 -DVERSION=\"$(GIT_HASH)\"
 
 # platform specific macros
 ifeq ($(OS),Windows_NT)
