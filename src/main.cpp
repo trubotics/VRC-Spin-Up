@@ -296,7 +296,7 @@ void userControl(void)
     {
       roller.rollRoller();
     }
-  )
+  );
 
   while (1)
   {
@@ -326,7 +326,7 @@ void userControl(void)
     }
     else if (!primaryController.ButtonA.pressing())
     {
-      roller.stopRoller()
+      roller.stopRoller();
     }
 
     // Intake binds
