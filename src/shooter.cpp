@@ -123,6 +123,8 @@ void Shooter::pidLoop()
 
 void Shooter::spinUp() // get it?
 {
+  if (isSpinning)
+    return;
   // flywheel->setVelocity(0, vex::velocityUnits::pct); // wait for PID function to set velocity
   lastTime = 0;
   isSpinning = true;
