@@ -26,7 +26,7 @@ void Expansion::tryExpand()
     primaryController->rumble("-");
     secondaryController->rumble("-");
 
-    if (!(primaryController->ButtonR1.pressing() && secondaryController->ButtonR1.pressing()))
+    if (!(primaryController->ButtonY.pressing() && secondaryController->ButtonY.pressing()))
         return;
 
     for (int i = 0; i < 1000; i += 100)
@@ -35,7 +35,7 @@ void Expansion::tryExpand()
         primaryController->rumble(".");
         secondaryController->rumble(".");
 
-        if (!(primaryController->ButtonR1.pressing() && secondaryController->ButtonR1.pressing()))
+        if (!(primaryController->ButtonY.pressing() && secondaryController->ButtonY.pressing()))
             return;
     }
 

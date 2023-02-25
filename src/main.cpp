@@ -282,8 +282,6 @@ void userControl(void)
   Brain.Screen.clearScreen();
   drive.setMotorLock(false); // unlock the drivetrain
 
-  bool drivetrainDebounce = false;
-  bool rollerDebounce = false;
   bool intakeDebounce = false;
 
   // Toggle drivetrain lock (toggles motors between brake and hold) [X]
@@ -292,6 +290,13 @@ void userControl(void)
       {
         drive.setMotorLock(!drive.getMotorLock());
       });
+
+  primaryController.ButtonA.pressed(
+    []()
+    {
+      roller.rollRoller();
+    }
+  )
 
   while (1)
   {
@@ -315,18 +320,13 @@ void userControl(void)
     drive.drive(forward, strafe, turn);
 
     // Roller binds
-    if (primaryController.ButtonA.pressing() && !rollerDebounce)
-    {
-      roller.rollRoller();
-      rollerDebounce = true;
-    }
     if (primaryController.ButtonL1.pressing() || primaryController.ButtonL2.pressing())
     {
       roller.rollRoller(primaryController.ButtonL1.pressing(), primaryController.ButtonL2.pressing());
     }
-    else if (rollerDebounce && !primaryController.ButtonA.pressing())
+    else if (!primaryController.ButtonA.pressing())
     {
-      rollerDebounce = false;
+      roller.stopRoller()
     }
 
     // Intake binds
