@@ -8,7 +8,7 @@ class Shooter
 {
 private:
     // Speed constants
-    const double MIN_VELOCITY = 60;
+    const double MIN_VELOCITY = 55;
     const double MAX_VELOCITY = 75;
     const double VELOCITY_RANGE = MAX_VELOCITY - MIN_VELOCITY;
 

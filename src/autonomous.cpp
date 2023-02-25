@@ -119,7 +119,7 @@ void Autonomous::rollRoller()
     roller->calibrateTeamColor();
 
     // continue driving into the roller very gently and roll the roller
-    drive->drive(-10, 0, 0);
+    //drive->drive(-10, 0, 0);
     roller->rollRoller(directionType::fwd);
     wait(500, timeUnits::msec);
     roller->stopRoller();

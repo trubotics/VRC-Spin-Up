@@ -12,7 +12,7 @@
 RollerRoller::RollerRoller(int32_t rollerPort, optical &colorSensor)
 {
     roller = new motor(rollerPort, ratio18_1, false);
-    roller->setVelocity(25, vex::velocityUnits::pct);
+    roller->setVelocity(50, vex::velocityUnits::pct);
 
     this->colorSensor = &colorSensor;
 }
