@@ -60,6 +60,10 @@ endif
 
 # git hash 
 GIT_HASH = $(shell git rev-parse --short HEAD)
+# timestamp
+TIMESTAMP = $(shell date +%Y-%m-%d+%H:%M:%S)
+
+$(info building version $(GIT_HASH) $(TIMESTAMP))
 
 # compile and link tools
 CC      = clang
@@ -69,7 +73,7 @@ SIZE    = arm-none-eabi-size
 LINK    = arm-none-eabi-ld
 ARCH    = arm-none-eabi-ar
 ECHO    = @echo
-DEFINES = -DVexV5 -DVERSION=\"$(GIT_HASH)\"
+DEFINES = -DVexV5 -DVERSION=\"$(GIT_HASH)\ $(TIMESTAMP)\"
 
 # platform specific macros
 ifeq ($(OS),Windows_NT)
