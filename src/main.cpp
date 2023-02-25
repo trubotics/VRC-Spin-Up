@@ -122,6 +122,11 @@ void pre_auton(void)
   // velocity managed by shooter
   flywheel.setStopping(vex::brakeType::coast);
 
+  // pid loop
+  thread pidThread = thread([]() {
+    shooter.pidLoop();
+  });
+
   displayStrategy();
   drawStrategyMenu();
   Brain.Screen.pressed(
@@ -374,6 +379,79 @@ void userControl(void)
   }
 }
 
+bool debounce = false;
+int tuningIndex = 0; // The current value being tuned
+// 0 = P
+// 1 = I
+// 2 = D
+
+void tuningAdjuster()
+{
+  // Temporary tuning mode
+  if (primaryController.ButtonR1.pressing() && primaryController.ButtonR2.pressing())
+  {
+    double increment = 0.01;
+    if (primaryController.ButtonA.pressing())
+    {
+      increment = 0.0001;
+    }
+    if (primaryController.ButtonB.pressing())
+    {
+      increment = 0.001;
+    }
+    if (primaryController.ButtonX.pressing())
+    {
+      increment = 0.1;
+    }
+    if (primaryController.ButtonY.pressing())
+    {
+      increment = 1;
+    }
+
+    if (!debounce)
+    {
+      // change the tuning index
+      if (primaryController.ButtonLeft.pressing())
+      {
+        tuningIndex--;
+        if (tuningIndex < 0)
+        {
+          tuningIndex = 2;
+        }
+        debounce = true;
+      }
+      else if (primaryController.ButtonRight.pressing())
+      {
+        tuningIndex++;
+        if (tuningIndex > 2)
+        {
+          tuningIndex = 0;
+        }
+        debounce = true;
+      }
+      // change the value
+      else if (primaryController.ButtonUp.pressing())
+      {
+        shooter.changePID(tuningIndex, increment);
+        debounce = true;
+      }
+      else if (primaryController.ButtonDown.pressing())
+      {
+        shooter.changePID(tuningIndex, -increment);
+        debounce = true;
+      }
+    }
+  }
+}
+
+void debounceResetter()
+{
+  if (!(primaryController.ButtonUp.pressing() || primaryController.ButtonDown.pressing() || primaryController.ButtonLeft.pressing() || primaryController.ButtonRight.pressing()))
+  {
+    debounce = false;
+  }
+}
+
 //
 // Main will set up the competition functions and callbacks.
 //
@@ -397,14 +475,14 @@ int main()
   {
     wait(100, msec);
 
+    tuningAdjuster();
+    debounceResetter();
+
     // disable preauton config menu when enabled
     if (Competition.isEnabled())
     {
       Brain.Screen.pressed([]() {});
     }
-
-    // call update functions
-    shooter.updateVelocity();
 
     // display git commit hash
     Brain.Screen.setCursor(20, 1);

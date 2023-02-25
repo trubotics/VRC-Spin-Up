@@ -21,10 +21,31 @@ Shooter::Shooter(brain Brain, motor_group flywheel, pneumatics p)
   this->piston = &p;
 }
 
+// temp
+void Shooter::changePID(int index, double deltaPID)
+{
+  switch (index)
+  {
+  case 0:
+    kP += deltaPID;
+    break;
+  case 1:
+    kI += deltaPID;
+    break;
+  case 2:
+    kD += deltaPID;
+    break;
+  }
+
+  Brain->Screen.setCursor(2, 1);
+  Brain->Screen.clearLine();
+  Brain->Screen.print("PID: %f %f %f", kP, kI, kD);
+}
+
 //////////////////////////////////////////////////////
 /// @brief basic PID control for flywheel velocity ///
 //////////////////////////////////////////////////////
-double sumError = 0, lastError = 0, lastTime = 0;
+double lastError, lastTime, integralTotal;
 void Shooter::updateVelocity()
 {
   // don't need to calculate when not spinning
@@ -43,29 +64,41 @@ void Shooter::updateVelocity()
   {
     lastTime = currentTime;
     lastError = error;
+    integralTotal = 0;
   }
   else
   {
     double deltaTime = currentTime - lastTime;
-    derivative = (error - lastError) / (currentTime - lastTime) * kD;
 
-    sumError += error * (currentTime - lastTime);
+    double integral = error * deltaTime * kI;
+    integralTotal += integral;
+
+    derivative = (error - lastError) / deltaTime * kD;
   }
-
-  double integral = sumError * kI;
 
   lastError = error;
   lastTime = currentTime;
 
   // modify velocity
-  double output = proportional + integral + derivative;
+  double output = proportional + integralTotal + derivative;
   flywheel->setVelocity(targetVelocity + output, vex::velocityUnits::pct); // set new flywheel velocity target
+
+  // statistic printing
+  Brain->Screen.setCursor(2, 1);
+  Brain->Screen.clearLine();
+  Brain->Screen.print("PID: %f %f %f", kP, kI, kD);
+  Brain->Screen.newLine();
+  Brain->Screen.clearLine();
+  Brain->Screen.print("Measured Velocity: %f", this->flywheel->velocity(vex::velocityUnits::pct));
+  Brain->Screen.newLine();
+  Brain->Screen.clearLine();
+  Brain->Screen.print("Modified Target Velocity: %f", targetVelocity + output);
 }
 void Shooter::setTargetVelocity(double targetVelocity)
 {
   this->targetVelocity = fmin(fmax(targetVelocity, MIN_VELOCITY), MAX_VELOCITY); // clamp target velocity
 
-  sumError = lastError = lastTime = 0;
+  lastTime = 0;
 
   Brain->Screen.setCursor(1, 1);
   Brain->Screen.clearLine();
@@ -76,13 +109,22 @@ void Shooter::setRelativeTargetVelocity(double targetVelocity) // uses the min a
   double trueVelocity = targetVelocity * VELOCITY_RANGE + MIN_VELOCITY;
   setTargetVelocity(trueVelocity);
 }
+void Shooter::pidLoop()
+{
+  while (true)
+  {
+    if (!isSpinning)
+      wait(100, timeUnits::msec);
+      continue;
+    updateVelocity();
+    wait(100, timeUnits::msec);
+  }
+}
 
 void Shooter::spinUp() // get it?
 {
-  if (isSpinning)
-    return;
-  //flywheel->setVelocity(0, vex::velocityUnits::pct); // wait for PID function to set velocity
-  sumError = lastError = lastTime = 0;
+  // flywheel->setVelocity(0, vex::velocityUnits::pct); // wait for PID function to set velocity
+  lastTime = 0;
   isSpinning = true;
   flywheel->spin(vex::directionType::fwd);
 }
@@ -95,9 +137,9 @@ void Shooter::stop()
 bool Shooter::fireDisk(bool skipPreCheck)
 {
   // check preconditions: firing cooldown, flywheel speed
-  if (!skipPreCheck &&                                                                   // precheck override
-      //(Brain->timer(timeUnits::msec) - lastFiringTime <= 75                            // firing cooldown (50 ms)
-      /*||*/ std::abs((*flywheel).velocity(vex::velocityUnits::pct) - targetVelocity) > 5)//) // flywheel speed (+- 5%)
+  if (!skipPreCheck &&                                                                     // precheck override
+                                                                                           //(Brain->timer(timeUnits::msec) - lastFiringTime <= 75                            // firing cooldown (50 ms)
+      /*||*/ std::abs((*flywheel).velocity(vex::velocityUnits::pct) - targetVelocity) > 5) //) // flywheel speed (+- 5%)
   {
     return false; // failed prechecks
   }
