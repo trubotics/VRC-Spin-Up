@@ -11,8 +11,8 @@
 
 using namespace vex;
 
-Autonomous::Autonomous(MecanumDriveTrain &drive, Shooter &shooter, RollerRoller &roller,
-                       distance &leftDistance, distance &rightDistance, inertial &inertialSensor)
+Autonomous::Autonomous(MecanumDriveTrain& drive, Shooter& shooter, RollerRoller& roller,
+    distance& leftDistance, distance& rightDistance, inertial& inertialSensor)
 {
     this->drive = &drive;
     this->shooter = &shooter;
@@ -27,6 +27,7 @@ Strategy Autonomous::getStrategy()
 {
     return strategy;
 }
+
 std::string Autonomous::getStrategyString()
 {
     switch (strategy)
@@ -41,6 +42,7 @@ std::string Autonomous::getStrategyString()
         return "Unknown";
     }
 }
+
 void Autonomous::setStrategy(Strategy strategy)
 {
     Autonomous::strategy = strategy;
@@ -52,7 +54,7 @@ void Autonomous::setStrategy(Strategy strategy)
 void Autonomous::sensorStrafe(double targetDistance, double speed)
 {
     // select sensor
-    vex::distance *selectedSensor;
+    vex::distance* selectedSensor;
     if (targetDistance > 0)
     {
         selectedSensor = rightDistance;
@@ -83,66 +85,21 @@ void Autonomous::sensorStrafe(double targetDistance, double speed)
     drive->drive(0, 0, 0);
 }
 
-// Rotate using the inertial sensor
-// Use negative degrees to rotate left
-void Autonomous::sensorRotate(double deltaAngle, double speed)
-{
-    double initialRotation = inertialSensor->rotation(vex::rotationUnits::deg);
-
-    // rotate
-    if (deltaAngle > 0)
-    {
-        while (inertialSensor->rotation(vex::rotationUnits::deg) - initialRotation < deltaAngle)
-        {
-            drive->drive(0, 0, speed);
-        }
-    }
-    else
-    {
-        while (inertialSensor->rotation(vex::rotationUnits::deg) - initialRotation > deltaAngle)
-        {
-            drive->drive(0, 0, -speed);
-        }
-    }
-
-    drive->drive(0, 0, 0);
-}
-
 // Rolls the roller
 void Autonomous::rollRoller()
 {
     // "creep" to roller
-    drive->drive(-30, 0, 0);
+    drive->drive(-5, 0, 0);
     waitUntil(drive->getAvgTorque() > 0.5);
 
     // calibrate team color
     roller->calibrateTeamColor();
 
     // continue driving into the roller very gently and roll the roller
-    //drive->drive(-10, 0, 0);
     roller->rollRoller(directionType::fwd);
-    wait(500, timeUnits::msec);
+    wait(300, timeUnits::msec);
     roller->stopRoller();
     drive->drive(0, 0, 0);
-}
-
-// Spins up the flywheel and fires a disk
-void Autonomous::fireDisk(int count, double velocity)
-{
-    // spin up flywheel to speed
-    shooter->setTargetVelocity(velocity);
-    shooter->spinUp();
-
-    // fire disks when possible
-    for (int i = 0; i < count; i++)
-    {
-        // manually wait for flywheel to spin up
-        wait(2, sec);
-        waitUntil(shooter->fireDisk(true)); // wait until disk is fired successfully
-    }
-
-    // stop flywheel
-    shooter->stop();
 }
 
 void Autonomous::run()
@@ -156,19 +113,12 @@ void Autonomous::run()
         break;
     case Strategy::LoaderRoller:
         // move left to the roller
-        sensorStrafe(-20);
         rollRoller();
-        // move forward slightly and fire two disks
-        drive->driveFor(100, 0, 0, 0.25);
-        fireDisk();
         break;
     case Strategy::SideRoller:
         // move right to the roller
-        sensorStrafe(24);
+        sensorStrafe(26);
         rollRoller();
-        // move forward slightly and fire two disks
-        drive->driveFor(100, 0, 0, 0.25);
-        fireDisk();
         break;
     }
 }
