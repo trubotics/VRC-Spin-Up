@@ -37,7 +37,7 @@ inertial inertialSensor = inertial(PORT3);
 optical opticalSensor = optical(PORT20);
 
 // drive train
-MecanumDriveTrain drive = MecanumDriveTrain(PORT15, true, PORT16, true, PORT5, false, PORT6, false);
+MecanumDriveTrain drive = MecanumDriveTrain(PORT15, 1, PORT16, 1, PORT5, 0, PORT6, 0);
 
 // intake
 Intake intake = Intake(PORT8);
@@ -46,8 +46,8 @@ Intake intake = Intake(PORT8);
 RollerRoller roller = RollerRoller(PORT10, opticalSensor);
 
 // flywheel
-motor flywheelFront = motor(PORT11, ratio36_1, false);
-motor flywheelBack = motor(PORT12, ratio36_1, false);
+motor flywheelFront = motor(PORT11, ratio36_1, 0);
+motor flywheelBack = motor(PORT12, ratio36_1, 0);
 motor_group flywheel = motor_group(flywheelFront, flywheelBack);
 
 // firing piston
@@ -63,6 +63,9 @@ Autonomous autonomous = Autonomous(drive, shooter, roller,
                                    leftDist, rightDist, inertialSensor);
 
 /* Global Functions */
+controller * soloController;
+void emergencySoloMode();
+void soloBind();
 
 void displayStrategy()
 {
@@ -174,24 +177,24 @@ void bindControls()
   primaryController.ButtonL1.pressed(
       []()
       {
-        roller.rollRoller(true, primaryController.ButtonL2.pressing());
+        roller.rollRoller(1, primaryController.ButtonL2.pressing());
       });
   // Roll Downwards (Player 1) [L2+]
   primaryController.ButtonL2.pressed(
       []()
       {
-        roller.rollRoller(primaryController.ButtonL1.pressing(), true);
+        roller.rollRoller(primaryController.ButtonL1.pressing(), 1);
       });
   // Stop roller (Player 1) [L1-&L2-]
   primaryController.ButtonL1.released(
       []()
       {
-        roller.rollRoller(false, primaryController.ButtonL2.pressing());
+        roller.rollRoller(0, primaryController.ButtonL2.pressing());
       });
   primaryController.ButtonL2.released(
       []()
       {
-        roller.rollRoller(primaryController.ButtonL1.pressing(), false);
+        roller.rollRoller(primaryController.ButtonL1.pressing(), 0);
       });
 
   // Intake Binds
@@ -199,24 +202,24 @@ void bindControls()
   primaryController.ButtonR1.pressed(
       []()
       {
-        intake.spinIntake(true, primaryController.ButtonR2.pressing());
+        intake.spinIntake(1, primaryController.ButtonR2.pressing());
       });
   // Spit out (Player 1) [R2+]
   primaryController.ButtonR2.pressed(
       []()
       {
-        intake.spinIntake(primaryController.ButtonR1.pressing(), true);
+        intake.spinIntake(primaryController.ButtonR1.pressing(), 1);
       });
   // Stop intake (Player 1) [R1-&R2-]
   primaryController.ButtonR1.released(
       []()
       {
-        intake.spinIntake(false, primaryController.ButtonR2.pressing());
+        intake.spinIntake(0, primaryController.ButtonR2.pressing());
       });
   primaryController.ButtonR2.released(
       []()
       {
-        intake.spinIntake(primaryController.ButtonR1.pressing(), false);
+        intake.spinIntake(primaryController.ButtonR1.pressing(), 0);
       });
 
   // Shooter Binds (Player 2)
@@ -275,18 +278,130 @@ void bindControls()
       {
         expansion.tryExpand();
       });
+
+  // primaryController.ButtonL2.pressed(
+  //     []()
+  //     {
+  //       soloController = &primaryController; 
+  //       emergencySoloMode();
+  //     }
+  //   );
+  // secondaryController.ButtonL2.pressed(
+  //     []()
+  //     {
+  //       soloController = &secondaryController;
+  //       emergencySoloMode();
+  //     }
+  // );
 }
+
+bool goSolo = 0;  
+void emergencySoloMode() {
+  if (!(soloController->ButtonR2.pressing() && soloController->ButtonR2.pressing()))
+    return;
+  
+  for (int i = 0; i < 1000; i += 100)
+    {
+        wait(100, msec);
+        soloController->rumble(".");
+
+        if (!(soloController->ButtonR2.pressing() && soloController->ButtonR2.pressing()))
+            return;
+    }
+
+  goSolo = 1;
+}
+
+bool soloLayer = 0;
+void soloBind()
+{
+  if (!soloLayer) {
+    Brain.Screen.setCursor(6, 1);
+    Brain.Screen.clearLine();
+    Brain.Screen.print("LAYER 1");
+    // Intake Binds
+    // Take in [R1+]
+    soloController->ButtonL1.pressed(
+        []()
+        {
+          intake.spinIntake(1, primaryController.ButtonL2.pressing());
+        });
+    // Spit out [R2+]
+    soloController->ButtonL2.pressed(
+        []()
+        {
+          
+        });
+    // Shooter Binds
+    // Fire Disk [R1]
+    soloController->ButtonR1.pressed(
+        []()
+        {
+          shooter.fireDisk();
+        });
+    // Spin up flywheel [R2+]
+    soloController->ButtonR2.pressed(
+        []()
+        {
+          shooter.spinUp();
+        });
+  } else {
+    Brain.Screen.setCursor(6, 1);
+    Brain.Screen.clearLine();
+    Brain.Screen.print("LAYER 2");
+    // Manual Roller Binds
+    // Roll Upwards [L1+]
+    soloController->ButtonL1.pressed(
+        []()
+        {
+          roller.rollRoller(1, primaryController.ButtonL2.pressing());
+        });
+    // Roll Downwards [L2+]
+    soloController->ButtonL2.pressed(
+        []()
+        {
+          soloLayer ? 
+          roller.rollRoller(primaryController.ButtonL1.pressing(), 1) : 
+          intake.spinIntake(primaryController.ButtonL1.pressing(), 1);
+        });
+  }
+  // EXPANSION
+  soloController->ButtonY.pressed(
+      []()
+      {
+        expansion.tryExpand();
+      });
+}
+
+bool soloB=0;
 void userControl(void)
 {
   // User control code here, inside the loop
   Brain.Screen.clearScreen();
-  drive.setMotorLock(false); // unlock the drivetrain
+  drive.setMotorLock(0); // unlock the drivetrain
 
   // callback controls
   bindControls();
 
   while (1)
   {
+    if (!goSolo) {
+      bindControls();
+    } else {
+      soloBind();
+      Brain.Screen.setCursor(4, 1);
+      Brain.Screen.clearLine();
+      Brain.Screen.print("Solo Active");
+      Brain.Screen.setCursor(5, 1);
+      Brain.Screen.clearLine();
+      Brain.Screen.print("Layer: %d", soloLayer);
+
+      if (soloController->ButtonB.pressing()) {
+        soloLayer = !soloLayer;
+        wait(500, vex::timeUnits::msec);
+      }
+    }
+
     // arcade drive (left stick controls forward/backward and strafe, right stick controls turning) [LS, RS]
     // primary controller drives intake forward (negative values), secondary drives shooter forwards (positive values)
     int forward = -primaryController.Axis3.position();
@@ -298,12 +413,12 @@ void userControl(void)
       strafe = secondaryController.Axis4.position();
       turn = secondaryController.Axis1.position();
     }
-    if (primaryController.ButtonB.pressing() || secondaryController.ButtonB.pressing()) // slow mode (1/3 speed) [B]
-    {
-      forward /= 3;
-      strafe /= 3;
-      turn /= 3;
-    }
+    // if (primaryController.ButtonB.pressing() || secondaryController.ButtonB.pressing()) // slow mode (1/3 speed) [B]
+    // {
+    //   forward /= 3;
+    //   strafe /= 3;
+    //   turn /= 3;
+    // }
     drive.drive(forward, strafe, turn);
 
     wait(20, msec); // Sleep the task for a short amount of time to
@@ -330,7 +445,7 @@ int main()
   Competition.drivercontrol(userControl);
 
   // Prevent main from exiting with an infinite loop.
-  while (true)
+  while (1)
   {
     wait(100, msec);
 
