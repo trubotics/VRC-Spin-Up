@@ -156,7 +156,7 @@ void Autonomous::run()
         break;
     case Strategy::LoaderRoller:
         // move left to the roller
-        sensorStrafe(-24);
+        sensorStrafe(-20);
         rollRoller();
         // move forward slightly and fire two disks
         drive->driveFor(100, 0, 0, 0.25);
