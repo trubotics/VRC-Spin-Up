@@ -61,15 +61,15 @@ endif
 # git hash 
 GIT_HASH = $(shell git rev-parse --short HEAD)
 # timestamp
-TIMESTAMP = $(shell date +%Y-%m-%d+%H:%M:%S)
+# TIMESTAMP = $(shell date +%Y-%m-%d+%H:%M:%S)
 
-$(info building version $(GIT_HASH) $(TIMESTAMP))
+# $(info building version $(GIT_HASH) $(TIMESTAMP))
 
-# rebuild main file if git hash changes
-ifneq ($(shell cat .githash 2> /dev/null),$(GIT_HASH))
-$(shell echo $(GIT_HASH) > .githash)
-$(shell touch src/main.cpp)
-endif
+# # rebuild main file if git hash changes
+# ifneq ($(shell cat .githash 2> /dev/null),$(GIT_HASH))
+# $(shell echo $(GIT_HASH) > .githash)
+# $(shell touch src/main.cpp)
+# endif
 
 # compile and link tools
 CC      = clang
@@ -79,7 +79,7 @@ SIZE    = arm-none-eabi-size
 LINK    = arm-none-eabi-ld
 ARCH    = arm-none-eabi-ar
 ECHO    = @echo
-DEFINES = -DVexV5 -DVERSION=\"$(GIT_HASH)\ $(TIMESTAMP)\"
+DEFINES = -DVexV5 -DVERSION=\"$(GIT_HASH)\"
 
 # platform specific macros
 ifeq ($(OS),Windows_NT)

@@ -12,7 +12,7 @@
 RollerRoller::RollerRoller(int32_t rollerPort, optical &colorSensor)
 {
     roller = new motor(rollerPort, ratio18_1, false);
-    roller->setVelocity(25, vex::velocityUnits::pct);
+    roller->setVelocity(60, vex::velocityUnits::pct);
 
     this->colorSensor = &colorSensor;
 }
@@ -31,14 +31,11 @@ void RollerRoller::rollRoller()
 {
     bool blueDetected = isBlueDetected();
     isSpinning = true;
-    if (isBlue == blueDetected)
-    {
-        roller->spin(vex::directionType::rev);
+    roller->spin(vex::directionType::fwd); // up
+
+    if (isBlue == blueDetected) {
         waitUntil(isBlue != isBlueDetected() || !isSpinning);
-    }
-    else
-    {
-        roller->spin(vex::directionType::fwd);
+    } else {
         waitUntil(isBlue == isBlueDetected() || !isSpinning);
     }
 

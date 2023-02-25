@@ -8,14 +8,14 @@ class Shooter
 {
 private:
     // Speed constants
-    const double MIN_VELOCITY = 60;
+    const double MIN_VELOCITY = 65;
     const double MAX_VELOCITY = 75;
     const double VELOCITY_RANGE = MAX_VELOCITY - MIN_VELOCITY; 
 
     // PID constants
-    const double kP = 0.05;
-    const double kI = 0.09;
-    const double kD = 0.01;
+    const double kP = 0.0002;
+    const double kI = 0.0003;
+    const double kD = 0.0000;
     
     brain *Brain = nullptr;
     motor_group *flywheel = nullptr;

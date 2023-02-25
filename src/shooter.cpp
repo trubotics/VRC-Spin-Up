@@ -60,6 +60,15 @@ void Shooter::updateVelocity()
   // modify velocity
   double output = proportional + integral + derivative;
   flywheel->setVelocity(targetVelocity + output, vex::velocityUnits::pct); // set new flywheel velocity target
+
+  Brain->Screen.setCursor(2, 1);
+  Brain->Screen.clearLine();
+  Brain->Screen.print("Output Velocity: %f", this->targetVelocity + output);
+
+  Brain->Screen.setCursor(3, 1);
+  Brain->Screen.clearLine();
+  Brain->Screen.print("Measured Velocity: %f", this->flywheel->velocity(vex::velocityUnits::pct));
+
 }
 void Shooter::setTargetVelocity(double targetVelocity)
 {
