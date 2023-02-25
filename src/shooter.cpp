@@ -79,6 +79,8 @@ void Shooter::setRelativeTargetVelocity(double targetVelocity) // uses the min a
 
 void Shooter::spinUp() // get it?
 {
+  if (isSpinning)
+    return;
   //flywheel->setVelocity(0, vex::velocityUnits::pct); // wait for PID function to set velocity
   sumError = lastError = lastTime = 0;
   isSpinning = true;

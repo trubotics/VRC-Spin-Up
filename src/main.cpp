@@ -282,8 +282,16 @@ void userControl(void)
   Brain.Screen.clearScreen();
   drive.setMotorLock(false); // unlock the drivetrain
 
-  // callback controls
-  bindControls();
+  bool drivetrainDebounce = false;
+  bool rollerDebounce = false;
+  bool intakeDebounce = false;
+
+  // Toggle drivetrain lock (toggles motors between brake and hold) [X]
+  primaryController.ButtonX.pressed(
+      []()
+      {
+        drive.setMotorLock(!drive.getMotorLock());
+      });
 
   while (1)
   {
@@ -305,6 +313,61 @@ void userControl(void)
       turn /= 3;
     }
     drive.drive(forward, strafe, turn);
+
+    // Roller binds
+    if (primaryController.ButtonA.pressing() && !rollerDebounce)
+    {
+      roller.rollRoller();
+      rollerDebounce = true;
+    }
+    if (primaryController.ButtonL1.pressing() || primaryController.ButtonL2.pressing())
+    {
+      roller.rollRoller(primaryController.ButtonL1.pressing(), primaryController.ButtonL2.pressing());
+    }
+    else if (rollerDebounce && !primaryController.ButtonA.pressing())
+    {
+      rollerDebounce = false;
+    }
+
+    // Intake binds
+    intake.spinIntake(primaryController.ButtonR1.pressing(), primaryController.ButtonR2.pressing());
+
+    // Shooter binds
+    if (secondaryController.ButtonR1.pressing())
+    {
+      shooter.fireDisk();
+    }
+    if (secondaryController.ButtonR2.pressing())
+    {
+      shooter.spinUp();
+    }
+    else
+    {
+      shooter.stop();
+    }
+
+    if (secondaryController.ButtonUp.pressing())
+    {
+      shooter.setRelativeTargetVelocity(1);
+    }
+    if (secondaryController.ButtonDown.pressing())
+    {
+      shooter.setRelativeTargetVelocity(0);
+    }
+    if (secondaryController.ButtonLeft.pressing())
+    {
+      shooter.setRelativeTargetVelocity(1/3);
+    }
+    if (secondaryController.ButtonRight.pressing())
+    {
+      shooter.setRelativeTargetVelocity(2/3);
+    }
+
+    //Expansion binds
+    if (primaryController.ButtonY.pressing() || secondaryController.ButtonY.pressing())
+    {
+      expansion.tryExpand();
+    }
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
