@@ -123,9 +123,8 @@ void pre_auton(void)
   flywheel.setStopping(vex::brakeType::coast);
 
   // pid loop
-  thread pidThread = thread([]() {
-    shooter.pidLoop();
-  });
+  thread pidThread = thread([]()
+                            { shooter.pidLoop(); });
 
   displayStrategy();
   drawStrategyMenu();
@@ -138,149 +137,6 @@ void pre_auton(void)
       });
 }
 
-void bindControls()
-{
-  // Drivetrain Binds
-  // Toggle drivetrain lock (toggles motors between brake and hold) [X]
-  primaryController.ButtonX.pressed(
-      []()
-      {
-        drive.setMotorLock(!drive.getMotorLock());
-      });
-
-  // Smart Roller Binds
-  // Start smart roller (Player 1) [A+]
-  primaryController.ButtonA.pressed(
-      []()
-      {
-        roller.rollRoller();
-      });
-  // Start smart roller (Player 2) [L1]
-  secondaryController.ButtonL1.pressed(
-      []()
-      {
-        roller.rollRoller();
-      });
-  // Stop smart roller (Player 1) [A-]
-  primaryController.ButtonA.released(
-      []()
-      {
-        roller.stopRoller();
-      });
-  // Stop smart roller (Player 2) [L2]
-  secondaryController.ButtonL2.pressed(
-      []()
-      {
-        roller.stopRoller();
-      });
-
-  // Manual Roller Binds
-  // Roll Upwards (Player 1) [L1+]
-  primaryController.ButtonL1.pressed(
-      []()
-      {
-        roller.rollRoller(true, primaryController.ButtonL2.pressing());
-      });
-  // Roll Downwards (Player 1) [L2+]
-  primaryController.ButtonL2.pressed(
-      []()
-      {
-        roller.rollRoller(primaryController.ButtonL1.pressing(), true);
-      });
-  // Stop roller (Player 1) [L1-&L2-]
-  primaryController.ButtonL1.released(
-      []()
-      {
-        roller.rollRoller(false, primaryController.ButtonL2.pressing());
-      });
-  primaryController.ButtonL2.released(
-      []()
-      {
-        roller.rollRoller(primaryController.ButtonL1.pressing(), false);
-      });
-
-  // Intake Binds
-  // Take in (Player 1) [R1+]
-  primaryController.ButtonR1.pressed(
-      []()
-      {
-        intake.spinIntake(true, primaryController.ButtonR2.pressing());
-      });
-  // Spit out (Player 1) [R2+]
-  primaryController.ButtonR2.pressed(
-      []()
-      {
-        intake.spinIntake(primaryController.ButtonR1.pressing(), true);
-      });
-  // Stop intake (Player 1) [R1-&R2-]
-  primaryController.ButtonR1.released(
-      []()
-      {
-        intake.spinIntake(false, primaryController.ButtonR2.pressing());
-      });
-  primaryController.ButtonR2.released(
-      []()
-      {
-        intake.spinIntake(primaryController.ButtonR1.pressing(), false);
-      });
-
-  // Shooter Binds (Player 2)
-  // Fire Disk [R1]
-  secondaryController.ButtonR1.pressed(
-      []()
-      {
-        shooter.fireDisk();
-      });
-  // Spin up flywheel [R2+]
-  secondaryController.ButtonR2.pressed(
-      []()
-      {
-        shooter.spinUp();
-      });
-  // Stop flywheel [R2-]
-  secondaryController.ButtonR2.released(
-      []()
-      {
-        shooter.stop();
-      });
-  // Set flywheel to the max speed [Up]
-  secondaryController.ButtonUp.pressed(
-      []()
-      {
-        shooter.setRelativeTargetVelocity(1);
-      });
-  // Set flywheel to the min speed [Down]
-  secondaryController.ButtonDown.pressed(
-      []()
-      {
-        shooter.setRelativeTargetVelocity(0);
-      });
-  // Set the flywheel to 1/3 speed [Left]
-  secondaryController.ButtonLeft.pressed(
-      []()
-      {
-        shooter.setRelativeTargetVelocity(1/3);
-      });
-  // Set the flywheel to 2/3 speed [Right]
-  secondaryController.ButtonRight.pressed(
-      []()
-      {
-        shooter.setRelativeTargetVelocity(2/3);
-      });
-
-  // Expansion Binds
-  // Try expanding [Y]
-  primaryController.ButtonY.pressed(
-      []()
-      {
-        expansion.tryExpand();
-      });
-  secondaryController.ButtonY.pressed(
-      []()
-      {
-        expansion.tryExpand();
-      });
-}
 void userControl(void)
 {
   // User control code here, inside the loop
@@ -297,11 +153,10 @@ void userControl(void)
       });
 
   primaryController.ButtonA.pressed(
-    []()
-    {
-      roller.rollRoller();
-    }
-  );
+      []()
+      {
+        roller.rollRoller();
+      });
 
   while (1)
   {
@@ -344,6 +199,7 @@ void userControl(void)
     }
     if (secondaryController.ButtonR2.pressing())
     {
+      shooter.updateVelocity();
       shooter.spinUp();
     }
     else
@@ -361,14 +217,14 @@ void userControl(void)
     }
     if (secondaryController.ButtonLeft.pressing())
     {
-      shooter.setRelativeTargetVelocity(1/3);
+      shooter.setRelativeTargetVelocity(1 / 3);
     }
     if (secondaryController.ButtonRight.pressing())
     {
-      shooter.setRelativeTargetVelocity(2/3);
+      shooter.setRelativeTargetVelocity(2 / 3);
     }
 
-    //Expansion binds
+    // Expansion binds
     if (primaryController.ButtonY.pressing() || secondaryController.ButtonY.pressing())
     {
       expansion.tryExpand();

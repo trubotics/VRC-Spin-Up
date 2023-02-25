@@ -52,6 +52,10 @@ void Shooter::updateVelocity()
   if (!isSpinning)
     return;
 
+  Brain->Screen.setCursor(3, 1);
+  Brain->Screen.clearLine();
+  Brain->Screen.print("Spinning");
+
   double error = this->targetVelocity - this->flywheel->velocity(vex::velocityUnits::pct);
 
   // for proportional
@@ -84,9 +88,12 @@ void Shooter::updateVelocity()
   flywheel->setVelocity(targetVelocity + output, vex::velocityUnits::pct); // set new flywheel velocity target
 
   // statistic printing
-  Brain->Screen.setCursor(2, 1);
+  Brain->Screen.setCursor(1, 1);
   Brain->Screen.clearLine();
   Brain->Screen.print("PID: %f %f %f", kP, kI, kD);
+  Brain->Screen.setCursor(2, 1);
+  Brain->Screen.clearLine();
+  Brain->Screen.print("PID Values: %f %f %f", proportional, integralTotal, derivative);
   Brain->Screen.newLine();
   Brain->Screen.clearLine();
   Brain->Screen.print("Measured Velocity: %f", this->flywheel->velocity(vex::velocityUnits::pct));
@@ -111,14 +118,14 @@ void Shooter::setRelativeTargetVelocity(double targetVelocity) // uses the min a
 }
 void Shooter::pidLoop()
 {
-  while (true)
-  {
-    if (!isSpinning)
-      wait(100, timeUnits::msec);
-      continue;
-    updateVelocity();
-    wait(100, timeUnits::msec);
-  }
+  // while (true)
+  // {
+  //   if (!isSpinning)
+  //     wait(100, timeUnits::msec);
+  //   continue;
+  //   updateVelocity();
+  //   wait(100, timeUnits::msec);
+  // }
 }
 
 void Shooter::spinUp() // get it?
