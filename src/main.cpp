@@ -202,6 +202,11 @@ void userControl(void)
       shooter.updateVelocity();
       shooter.spinUp();
     }
+    else if (secondaryController.ButtonL2.pressing())
+    {
+      flywheel.setVelocity(100, vex::percentUnits::pct);
+      flywheel.spin(vex::directionType::rev);
+    }
     else
     {
       shooter.stop();
