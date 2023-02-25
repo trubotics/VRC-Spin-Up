@@ -65,6 +65,12 @@ TIMESTAMP = $(shell date +%Y-%m-%d+%H:%M:%S)
 
 $(info building version $(GIT_HASH) $(TIMESTAMP))
 
+# rebuild main file if git hash changes
+ifneq ($(shell cat .githash 2> /dev/null),$(GIT_HASH))
+$(shell echo $(GIT_HASH) > .githash)
+$(shell touch src/main.cpp)
+endif
+
 # compile and link tools
 CC      = clang
 CXX     = clang
