@@ -63,8 +63,7 @@ void Shooter::updateVelocity()
 }
 void Shooter::setTargetVelocity(double targetVelocity)
 {
-    this->targetVelocity = fmin(fmax(targetVelocity, MIN_VELOCITY), MIN_VELOCITY); // clamp target velocity
-  // this->flywheel->setVelocity(this->targetVelocity, vex::velocityUnits::pct);
+  this->targetVelocity = fmin(fmax(targetVelocity, MIN_VELOCITY), MAX_VELOCITY); // clamp target velocity
 
   sumError = lastError = lastTime = 0;
 
