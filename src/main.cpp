@@ -31,7 +31,7 @@ controller primaryController = controller(primary);
 controller secondaryController = controller(partner);
 
 // sensors
-distance leftDist = distance(PORT17);
+distance leftDist = distance(PORT10);
 distance rightDist = distance(PORT7);
 inertial inertialSensor = inertial(PORT3);
 optical opticalSensor = optical(PORT20);
